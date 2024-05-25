@@ -90,7 +90,8 @@ const deleteAllMessage = () => {
       text: userInput,
       text_display: userInput
     };
-
+    const aiMessage = document.createElement('div');
+    aiMessage.scrollIntoView({ behavior: 'smooth' });
     setMessageHistory([...messageHistory, newMessage]);
     localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
 
@@ -102,7 +103,6 @@ const deleteAllMessage = () => {
     let save_text = '';
     let lastIndex = 0;
 
-    const aiMessage = document.createElement('div');
     aiMessage.className = 'message ai-message';
     aiMessage.textContent = 'Vui lòng chờ... ';
     document.getElementById('chat-box').appendChild(aiMessage);
