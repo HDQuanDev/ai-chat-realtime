@@ -4,13 +4,14 @@ import InputBox from './components/InputBox';
 import PwaPrompt from './components/PWAPrompt';
 import {showToast} from './components/Toast';
 import { marked } from 'marked';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, startDictation, stopDictation, stopSpeaking, copyTextToClipboard } from './components/Utils';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard } from './components/Utils';
 import './App.css'; // Import your CSS styles
 
 const App = () => {
-  showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
-  showToast('Change Log', '- Thay đổi giao diện sủ dụng ReactJS.<br>- Tối ưu hóa hiệu suất và tốc độ xử lý.<br>- Thêm chức năng nói và nghe tin nhắn.', 'info');
-  showToast('Thông Báo', 'Phiên bản 0.5.Beta Build ID: 2024-05-25 By Hứa Đức Quân', 'info');
+  
   const [messageHistory, setMessageHistory] = useState(() => {
     return JSON.parse(localStorage.getItem('messageHistorySave')) || [];
   });
@@ -25,15 +26,44 @@ const App = () => {
           console.log('ServiceWorker registration failed: ', err);
         });
     }
+    showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
+    showToast('Change Log', '- Thay đổi giao diện sủ dụng ReactJS.<br>- Tối ưu hóa hiệu suất, tốc độ xử lý và giao diện sử dụng.<br>- Thêm chức năng nói và nghe tin nhắn.<br>- Thêm chức năng sao chép nội dung tin nhắn.<br>- Thêm chức năng xóa toàn bộ tin nhắn.', 'info');
+    showToast('Thông Báo', 'Phiên bản 0.5.Beta Build ID: 2024-05-25 By Hứa Đức Quân', 'info');
   }, []);
+const deleteAllMessage = () => {
+  const MySwal = withReactContent(Swal);
+  MySwal.fire({
+    title: 'Xác nhận',
+    html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không? Hãy nhập "yes" để xác nhận.',
+    icon: 'warning',
+    input: 'text',
+    inputPlaceholder: 'Nhập "yes" để xác nhận',
+    showCancelButton: true,
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy',
+    cancelButtonColor: '#d33',
+    confirmButtonColor: '#3085d6',
+  }).then((result) => {
+    if (result.isConfirmed && result.value.toLowerCase() === 'yes') {
+      setMessageHistory([]);
+      localStorage.removeItem('messageHistorySave');
+      showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
+    } else if (result.isConfirmed) {
+      MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
+    }
+  });
+};
 
   const sendMessage = (autoSpeech = false) => {
+
+    const userInput = document.getElementById('user-input').value;
+    if (!userInput){
+      showToast('Thông Báo', 'Vui lòng nhập tin nhắn.', 'error');
+      return;
+    }
     disableButton('send');
     disableButton('mic');
     disableButton('user-input');
-    const userInput = document.getElementById('user-input').value;
-    if (!userInput) return;
-
     const newMessage = {
       sender: 'user',
       text: userInput,
@@ -44,7 +74,7 @@ const App = () => {
     localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://localhost/server.php', true);
+    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php', true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     
     let text = '';
@@ -80,6 +110,7 @@ const App = () => {
 
       aiMessage.innerHTML = marked(text) + `<hr><button onclick="speakText('${text_no_html_ai}')">🔊</button> <button onclick="copyTextToClipboard('${text_no_html_ai}')">📋</button>`;
       document.getElementById('chat-box').appendChild(aiMessage);
+      aiMessage.scrollIntoView({ behavior: 'smooth' });
     };
 
     xhr.onload = function () {
@@ -126,46 +157,58 @@ const App = () => {
       }))
     }));
 
-    document.getElementById('user-input').value = '';
   };
-  const startDictation = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = "vi-VN";
-      recognition.start();
-  
-      document.getElementById('stop-listening').style.display = 'inline';
-  
-      recognition.onresult = (e) => {
-        let interimTranscript = '';
-        let finalTranscript = '';
-  
-        for (let i = 0; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
-            finalTranscript += e.results[i][0].transcript;
-          } else {
-            interimTranscript += e.results[i][0].transcript;
+    let recognition;
+
+    const startDictation = () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = "vi-VN";
+        recognition.start();
+
+        document.getElementById('mic').style.display = 'none';
+        document.getElementById('stop-listening').style.display = 'inline';
+
+        recognition.onresult = (e) => {
+          let interimTranscript = '';
+          let finalTranscript = '';
+
+          for (let i = 0; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+              finalTranscript += e.results[i][0].transcript;
+            } else {
+              interimTranscript += e.results[i][0].transcript;
+            }
           }
-        }
-  
-        document.getElementById('user-input').value = finalTranscript + interimTranscript;
-  
-        if (finalTranscript) {
+
+          document.getElementById('user-input').value = finalTranscript + interimTranscript;
+
+          if (finalTranscript) {
+            recognition.stop();
+            sendMessage(true);
+            document.getElementById('stop-listening').style.display = 'none';
+            document.getElementById('mic').style.display = 'inline';
+          }
+        };
+
+        recognition.onerror = () => {
           recognition.stop();
-          sendMessage(true);
           document.getElementById('stop-listening').style.display = 'none';
-        }
-      };
-  
-      recognition.onerror = () => {
+          document.getElementById('mic').style.display = 'inline';
+        };
+      }
+    };
+
+    const stopDictation = () => {
+      if (recognition) {
         recognition.stop();
         document.getElementById('stop-listening').style.display = 'none';
-      };
-    }
-  };
+        document.getElementById('mic').style.display = 'inline';
+      }
+    };
   return (
     <div className="app">
       <PwaPrompt />
@@ -178,6 +221,7 @@ const App = () => {
         removeMarkdown={removeMarkdown}
       />
       <InputBox
+        deleteAllMessage={deleteAllMessage}
         sendMessage={sendMessage}
         startDictation={startDictation}
         stopDictation={stopDictation}

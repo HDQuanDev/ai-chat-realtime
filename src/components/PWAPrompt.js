@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const PwaPrompt = () => {
+  const [isClosed, setIsClosed] = useState(false);
+
   useEffect(() => {
     window.addEventListener('beforeinstallprompt', (e) => {
+      if (isClosed) return;
+
       e.preventDefault();
       const pwaPrompt = document.getElementById('pwa-prompt');
       const installButton = document.getElementById('install-button');
@@ -26,9 +30,10 @@ const PwaPrompt = () => {
 
       closeButton.addEventListener('click', () => {
         pwaPrompt.style.top = '-100px';
+        setIsClosed(true);
       });
     });
-  }, []);
+  }, [isClosed]);
 
   return (
     <div id="pwa-prompt" className="pwa-prompt">

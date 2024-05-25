@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 

@@ -22,7 +22,7 @@ body {
   gap: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding-bottom: 70px;
+  padding-bottom: 80px;
   transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -43,7 +43,7 @@ body {
   animation: slideUp 0.5s ease-in-out;
 }
 
-#input-box input {
+#input-box textarea {
   flex: 1;
   padding: 10px;
   border: 2px solid #007bff;
@@ -55,7 +55,7 @@ body {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-#input-box input:focus {
+#input-box textarea:focus {
   border-color: #0056b3;
   box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
 }
@@ -179,10 +179,10 @@ body {
 @media (max-width: 768px) {
   #chat-box {
     padding: 10px;
-    padding-bottom: 70px;
+    padding-bottom: 80px;
   }
 
-  #input-box input {
+  #input-box textarea {
     font-size: 14px;
   }
 
@@ -199,10 +199,10 @@ body {
 @media (max-width: 480px) {
   #chat-box {
     padding: 5px;
-    padding-bottom: 70px;
+    padding-bottom: 80px;
   }
 
-  #input-box input {
+  #input-box textarea {
     font-size: 12px;
   }
 
@@ -230,26 +230,11 @@ body {
   transition: color 0.3s;
 }
 
-#stop-speaking,
-#stop-listening {
-  position: fixed;
-  bottom: 70px;
-  right: 50%;
-  padding: 10px 20px;
-  border: none;
-  background-color: #ff0000;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  border-radius: 5px;
-  display: none;
-  z-index: 1000;
-}
 
 #stop-speaking:hover,
 #stop-listening:hover {
   background-color: #cc0000;
+  color: white;
   transform: scale(1.05);
 }
 
@@ -296,13 +281,13 @@ body.dark-mode #input-box {
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
 }
 
-body.dark-mode #input-box input {
+body.dark-mode #input-box textarea {
   background: #555;
   border-color: #007bff;
   color: #f7f7f7;
 }
 
-body.dark-mode #input-box input:focus {
+body.dark-mode #input-box textarea:focus {
   border-color: #0056b3;
   box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
 }
@@ -465,6 +450,9 @@ button {
   border-radius: 5px;
   font-size: 14px;
   transition: all 0.3s;
+
+  border-radius: 5px;
+  margin-right: 10px;
   /* Thêm hiệu ứng chuyển đổi */
 }
 
@@ -541,6 +529,8 @@ button:disabled:hover {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  border-radius: 5px;
+  margin-right: 10px;
 }
 
 .pwa-content button:hover {
@@ -562,4 +552,40 @@ button:disabled:hover {
   .pwa-content p {
     font-size: 14px;
   }
+}
+
+.clear-button {
+  background: transparent !important;
+  border: 2px solid rgb(255, 0, 0) !important;
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.clear-button:hover {
+  background-color: #ff0000;
+  color: white;
+}
+
+
+.stop-button {
+  background-color: #ff0000 !important;
+  color: white !important;
+  cursor: pointer;
+  font-size: 18px !important;
+  transition: background-color 0.3s;
+}
+
+.stop-button:hover {
+  background: transparent !important;
+  border: 2px solid rgb(255, 0, 0) !important;
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  border-radius: 5px;
+  border-radius: 5px;
+  margin-right: 10px;
 }
