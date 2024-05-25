@@ -37,6 +37,11 @@ const App = () => {
     } else {
       document.body.classList.remove('dark-mode');
     }
+
+setTimeout(() => {
+  document.getElementById('user-input').focus();
+  document.getElementById('chat-box').scrollIntoView({ behavior: 'smooth' });
+}, 1000); // Increase the timeout to 3000ms
   }, [isDarkMode]);
 const deleteAllMessage = () => {
   const MySwal = withReactContent(Swal);

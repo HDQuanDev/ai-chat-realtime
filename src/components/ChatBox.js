@@ -11,6 +11,8 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
 
   useEffect(scrollToBottom, [messageHistory]);
 
+  
+
   // Đảm bảo messageHistory luôn là một mảng
   if (!Array.isArray(messageHistory)) {
     messageHistory = [];
