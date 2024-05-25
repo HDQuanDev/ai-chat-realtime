@@ -40,7 +40,6 @@ const App = () => {
 
 setTimeout(() => {
   document.getElementById('user-input').focus();
-  document.getElementById('chat-box').scrollIntoView({ behavior: 'smooth' });
 }, 1000); // Increase the timeout to 3000ms
   }, [isDarkMode]);
 const deleteAllMessage = () => {
@@ -101,7 +100,7 @@ const deleteAllMessage = () => {
     localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php', true);
+    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php?model=gemini-1.5-flash-latest', true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     
     let text = '';
