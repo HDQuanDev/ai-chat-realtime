@@ -144,6 +144,7 @@ const deleteAllMessage = () => {
     xhr.onerror = function () {
       // Use Toast instead of alert
       showToast('Thông Báo', 'Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại sau.', 'error');
+      document.getElementById('chat-box').removeChild(aiMessage);
       enableButton('send');
       enableButton('mic');
       enableButton('user-input');
