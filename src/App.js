@@ -40,11 +40,24 @@ const App = () => {
   }, [isDarkMode]);
 const deleteAllMessage = () => {
   const MySwal = withReactContent(Swal);
+  if (messageHistory.length === 0) {
+    showToast('Thông Báo', 'Không có tin nhắn nào để xóa.', 'error');
+    return;
+  }
+  if(isDarkMode){
+    var background = '#555';
+    var color = '#f7f7f7';
+  }else{
+    var background = '#ebebeb';
+    var color = '#333';
+  }
   MySwal.fire({
     title: 'Xác nhận',
     html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không? Hãy nhập "yes" để xác nhận.',
     icon: 'warning',
     input: 'text',
+    background: background,
+    color: color,
     inputPlaceholder: 'Nhập "yes" để xác nhận',
     showCancelButton: true,
     confirmButtonText: 'Xóa',
