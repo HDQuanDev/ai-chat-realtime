@@ -5,6 +5,7 @@ import PwaPrompt from './components/PWAPrompt';
 import {showToast} from './components/Toast';
 import { marked } from 'marked';
 import Swal from 'sweetalert2'
+import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content'
 
 import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard } from './components/Utils';
@@ -15,7 +16,7 @@ const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
     return JSON.parse(localStorage.getItem('messageHistorySave')) || [];
   });
-
+  const isDarkMode = useDarkMode();
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
@@ -29,7 +30,14 @@ const App = () => {
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
     showToast('Change Log', '- Thay đổi giao diện sủ dụng ReactJS.<br>- Tối ưu hóa hiệu suất, tốc độ xử lý và giao diện sử dụng.<br>- Thêm chức năng nói và nghe tin nhắn.<br>- Thêm chức năng sao chép nội dung tin nhắn.<br>- Thêm chức năng xóa toàn bộ tin nhắn.', 'info');
     showToast('Thông Báo', 'Phiên bản 0.5.Beta Build ID: 2024-05-25 By Hứa Đức Quân', 'info');
-  }, []);
+  
+
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
 const deleteAllMessage = () => {
   const MySwal = withReactContent(Swal);
   MySwal.fire({

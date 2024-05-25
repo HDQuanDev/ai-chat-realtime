@@ -264,7 +264,7 @@ body {
 
 /* Dark mode styles */
 body.dark-mode {
-  background-color: #333;
+  background-color: #212121;
   color: #f7f7f7;
 }
 
