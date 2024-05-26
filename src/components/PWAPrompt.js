@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Notification_Sound, Click_Sound, Success_Sound, Error_Sound } from './SoundEffects';
+import { Notification_Sound, Click_Sound, Success_Sound, Error_Sound} from './SoundEffects';
 const PwaPrompt = () => {
   const [isClosed, setIsClosed] = useState(false);
 
@@ -26,6 +26,7 @@ useEffect(() => {
     main_click.addEventListener('click', () => {
     if(installButton) {
       installButton.addEventListener('click', () => {
+        e.preventDefault();
         Click_Sound();
         pwaPrompt.style.top = '-100px';
         e.prompt();
