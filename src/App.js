@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
-import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound } from './components/SoundEffects';
+import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
 import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
 import './App.css';
 
@@ -72,6 +72,7 @@ const handleHeightChange = (height) => {
 };
 
   const scrollToBottom = () => {
+    Slide_Down_Sound();
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
   };
 
@@ -312,7 +313,7 @@ const handleHeightChange = (height) => {
       />
       {showScrollButton && (
         <button className="scroll-button" onClick={scrollToBottom} ref={scrollButtonRef}>
-          ⭣
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-md m-1 text-token-text-primary"><path fill="currentColor" fill-rule="evenodd" d="M12 21a1 1 0 0 1-.707-.293l-7-7a1 1 0 1 1 1.414-1.414L11 17.586V4a1 1 0 1 1 2 0v13.586l5.293-5.293a1 1 0 0 1 1.414 1.414l-7 7A1 1 0 0 1 12 21" clip-rule="evenodd"></path></svg>
         </button>
       )}
     </div>
