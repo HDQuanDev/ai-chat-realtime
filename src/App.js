@@ -24,7 +24,7 @@ const App = () => {
 
   useEffect(() => {
     const Sound_Effects = getDataFromLocalStorage('sound-effects');
-    if (Sound_Effects === null) {
+    if (Sound_Effects == null) {
       setDataToLocalStorage('sound-effects', true);
     }
     if ('serviceWorker' in navigator) {
