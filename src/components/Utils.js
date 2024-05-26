@@ -1,4 +1,6 @@
 import toastr from 'toastr';
+import { Click_Sound, Success_Sound, Error_Sound } from './SoundEffects';
+
 export const stripHTML = (html) => {
     const resutl = html.replace(/<[^>]*>/g, '');
     return resutl;
@@ -33,6 +35,7 @@ export const speakText = (text) => {
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
+    Click_Sound();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "vi-VN";
     utterance.onstart = () => {
@@ -52,6 +55,7 @@ export const speakText = (text) => {
 
 export const stopSpeaking = () => {
     if (window.speechSynthesis.speaking) {
+        Click_Sound();
         window.speechSynthesis.cancel();
         document.getElementById('stop-speaking').style.display = 'none';
         document.getElementById('delete_all_chat').style.display = 'inline';
@@ -61,18 +65,24 @@ export const stopSpeaking = () => {
 
 
 export const copyTextToClipboard = (text) => {
-    var text = decodeURIComponent(text);
-    var text = decodeHtmlEntities(text);
+    var text_format, text_copy;
+    text_copy = decodeURIComponent(text);
+    text_format = decodeHtmlEntities(text_copy);
     var textArea = document.createElement("textarea");
-    textArea.value = text;
+    textArea.value = text_format;
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
 
     try {
         var successful = document.execCommand('copy');
-        var msg = successful ? 'successful' : 'unsuccessful';
-        toastr.success('Đã sao chép nội dung vào clipboard.');
+        if (successful) {
+            Success_Sound();
+            toastr.success('Đã sao chép nội dung vào clipboard.');
+        } else {
+            Error_Sound();
+            toastr.error('Không thể sao chép nội dung vào clipboard.', 'Lỗi');
+        }
     } catch (err) {
         toastr.error('Không thể sao chép nội dung vào clipboard.', 'Lỗi');
     }
@@ -87,4 +97,29 @@ export const decodeHtmlEntities = (str) => {
     str = str.replace(/&quot;/g, '"');
     str = str.replace(/&#39;/g, "'");
     return str;
+}
+
+export const check_is_mobile = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/android/i.test(userAgent) || (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream)) {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+export const getDataFromLocalStorage = (key) => {
+    const data = localStorage.getItem(key);
+    try {
+        return JSON.parse(data);
+    } catch (e) {
+     return data;
+    }
+}
+
+export const setDataToLocalStorage = (key, data) => {
+    if (typeof data === 'object') {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+    localStorage.setItem(key, data);
 }

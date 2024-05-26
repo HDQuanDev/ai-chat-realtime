@@ -1,3 +1,13 @@
+/* Ẩn scrollbar cho tất cả các phần tử */
+::-webkit-scrollbar {
+  display: none;  /* for Chrome, Safari, and Opera */
+}
+
+html, body {
+  scrollbar-width: none;  /* for Firefox */
+  -ms-overflow-style: none;  /* for Internet Explorer and Edge */
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -22,13 +32,15 @@ body {
   gap: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding-bottom: 80px;
+  padding-bottom: 110px;
   transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
   animation: fadeIn 0.5s ease-in-out;
 }
 
 #input-box {
   display: flex;
+  flex-direction: column;
+  /* Sắp xếp các phần tử theo cột */
   padding: 10px;
   background: #fff;
   border-top: 1px solid #e0e0e0;
@@ -41,6 +53,13 @@ body {
   box-sizing: border-box;
   transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
   animation: slideUp 0.5s ease-in-out;
+}
+
+.input-area {
+  display: flex;
+  align-items: center;
+  /* Canh giữa theo chiều dọc */
+  width: 100%;
 }
 
 #input-box textarea {
@@ -81,6 +100,17 @@ body {
   background-color: #0056b3;
   transform: scale(1.05);
 }
+
+.note {
+  font-size: 12px;
+  color: #cacaca;
+  margin-top: 10px;
+  /* Tạo khoảng cách giữa note và các phần tử khác */
+  text-align: center;
+  /* Canh giữa văn bản */
+}
+
+
 
 .message {
   margin: 5px;
@@ -175,11 +205,36 @@ body {
   }
 }
 
+
+.scroll-button {
+  background: #FFFFFF;
+  color: #000000;
+  border: 2px solid #555;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  bottom: 130px;
+  left: 50%;
+  right: 50%;
+  width: 35px; /* Giảm chiều rộng */
+  height: 35px; /* Giảm chiều cao */
+  border-radius: 50%; /* Làm cho nút tròn */
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 999;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.scroll-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+
 /* Responsive styles */
 @media (max-width: 768px) {
   #chat-box {
     padding: 10px;
-    padding-bottom: 80px;
+    padding-bottom: 120px;
   }
 
   #input-box textarea {
@@ -194,12 +249,16 @@ body {
   .message {
     max-width: 90%;
   }
+
+  .scroll-button {
+    bottom: 140px;
+  }
 }
 
 @media (max-width: 480px) {
   #chat-box {
     padding: 5px;
-    padding-bottom: 80px;
+    padding-bottom: 120px;
   }
 
   #input-box textarea {
@@ -213,6 +272,9 @@ body {
 
   .message {
     max-width: 95%;
+  }
+  .scroll-button {
+    bottom: 140px;
   }
 }
 
@@ -322,7 +384,12 @@ body.dark-mode .message .timestamp {
 body.dark-mode .speak-button {
   color: #f7f7f7;
 }
-
+body.dark-mode .scroll-button {
+  background: #333;
+  color: #f7f7f7;
+  border: 2px solid #555;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
 /* code block styles */
 /* Styles for code blocks */
 pre {

@@ -4,20 +4,29 @@ import InputBox from './components/InputBox';
 import PwaPrompt from './components/PWAPrompt';
 import {showToast} from './components/Toast';
 import { marked } from 'marked';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
-import withReactContent from 'sweetalert2-react-content'
-
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard } from './components/Utils';
-import './App.css'; // Import your CSS styles
+import withReactContent from 'sweetalert2-react-content';
+import SettingsButton from './components/Settings';
+import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound } from './components/SoundEffects';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
+import './App.css';
 
 const App = () => {
-  
   const [messageHistory, setMessageHistory] = useState(() => {
     return JSON.parse(localStorage.getItem('messageHistorySave')) || [];
   });
+
   const isDarkMode = useDarkMode();
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const inputBoxRef = useRef(null);
+  const scrollButtonRef = useRef(null);
+
   useEffect(() => {
+    const Sound_Effects = getDataFromLocalStorage('sound-effects');
+    if (Sound_Effects === null) {
+      setDataToLocalStorage('sound-effects', true);
+    }
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(registration => {
@@ -27,10 +36,9 @@ const App = () => {
           console.log('ServiceWorker registration failed: ', err);
         });
     }
+
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
-    showToast('Change Log', '- Thay đổi giao diện sủ dụng ReactJS.<br>- Tối ưu hóa hiệu suất, tốc độ xử lý và giao diện sử dụng.<br>- Thêm chức năng nói và nghe tin nhắn.<br>- Thêm chức năng sao chép nội dung tin nhắn.<br>- Thêm chức năng xóa toàn bộ tin nhắn.', 'info');
-    showToast('Thông Báo', 'Phiên bản 0.5.Beta Build ID: 2024-05-25 By Hứa Đức Quân', 'info');
-  
+    showToast('Thông Báo', 'Phiên bản 0.6.Beta Build ID: 2024-05-26 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -38,49 +46,84 @@ const App = () => {
       document.body.classList.remove('dark-mode');
     }
 
-setTimeout(() => {
-  document.getElementById('user-input').focus();
-}, 1000); // Increase the timeout to 3000ms
+    const handleScroll = () => {
+      const bottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
+      setShowScrollButton(!bottom);
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isDarkMode]);
-const deleteAllMessage = () => {
-  const MySwal = withReactContent(Swal);
-  if (messageHistory.length === 0) {
-    showToast('Thông Báo', 'Không có tin nhắn nào để xóa.', 'error');
-    return;
-  }
-  if(isDarkMode){
-    var background = '#555';
-    var color = '#f7f7f7';
-  }else{
-    var background = '#ebebeb';
-    var color = '#333';
-  }
-  MySwal.fire({
-    title: 'Xác nhận',
-    html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không? Hãy nhập "yes" để xác nhận.',
-    icon: 'warning',
-    input: 'text',
-    background: background,
-    color: color,
-    inputPlaceholder: 'Nhập "yes" để xác nhận',
-    showCancelButton: true,
-    confirmButtonText: 'Xóa',
-    cancelButtonText: 'Hủy',
-    cancelButtonColor: '#d33',
-    confirmButtonColor: '#3085d6',
-  }).then((result) => {
-    if (result.isConfirmed && result.value.toLowerCase() === 'yes') {
-      setMessageHistory([]);
-      localStorage.removeItem('messageHistorySave');
-      showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
-    } else if (result.isConfirmed) {
-      MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
+
+ // Khởi tạo state để lưu trữ chiều cao
+
+const handleHeightChange = (height) => {
+  console.log(height);
+  if (scrollButtonRef.current && height < '175') {
+    var px;
+    if(check_is_mobile()){
+      px = 80;
+    }else{
+      px = 65;
     }
-  });
+    console.log('scrollButtonRef.current', scrollButtonRef.current);
+    scrollButtonRef.current.style.setProperty('bottom', `${height + px}px`, 'important');
+  }
 };
 
-  const sendMessage = (autoSpeech = false) => {
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  };
 
+
+  const deleteAllMessage = () => {
+    const MySwal = withReactContent(Swal);
+    if (messageHistory.length === 0) {
+      Error_Sound();
+      showToast('Thông Báo', 'Không có tin nhắn nào để xóa.', 'error');
+      return;
+    }
+
+    var background, color;
+
+    if(isDarkMode){
+        background = '#555';
+        color = '#f7f7f7';
+    }else{
+        background = '#ebebeb';
+        color = '#333';
+    }
+    Click_Sound();
+    MySwal.fire({
+      title: 'Xác nhận',
+      html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không? Hãy nhập "yes" để xác nhận.',
+      icon: 'warning',
+      input: 'text',
+      background: background,
+      color: color,
+      inputPlaceholder: 'Nhập "yes" để xác nhận',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed && result.value.toLowerCase() === 'yes') {
+        Success_Sound();
+        setMessageHistory([]);
+        localStorage.removeItem('messageHistorySave');
+        showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
+      } else if (result.isConfirmed) {
+        Click_Sound();
+        MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
+      }else{
+        Click_Sound();
+      }
+    });
+  };
+
+
+  const sendMessage = (autoSpeech = false) => {
     const userInput = document.getElementById('user-input').value;
     if (!userInput){
       showToast('Thông Báo', 'Vui lòng nhập tin nhắn.', 'error');
@@ -98,7 +141,7 @@ const deleteAllMessage = () => {
     aiMessage.scrollIntoView({ behavior: 'smooth' });
     setMessageHistory([...messageHistory, newMessage]);
     localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
-
+    Send_Message();
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php?model=gemini-1.5-flash-latest', true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
@@ -110,8 +153,9 @@ const deleteAllMessage = () => {
     aiMessage.className = 'message ai-message';
     aiMessage.textContent = 'Vui lòng chờ... ';
     document.getElementById('chat-box').appendChild(aiMessage);
-
+    Typing_Message();
     xhr.onprogress = function () {
+      
       const newResponse = xhr.responseText.substring(lastIndex);
       lastIndex = xhr.responseText.length;
 
@@ -139,6 +183,8 @@ const deleteAllMessage = () => {
     };
 
     xhr.onload = function () {
+      Typing_Message(true);
+      Receive_Message();
       document.getElementById('chat-box').removeChild(aiMessage);
       let save_text_storage = removeMarkdown(save_text);
       save_text_storage = stripHTML(save_text_storage);
@@ -178,66 +224,75 @@ const deleteAllMessage = () => {
     xhr.send(JSON.stringify({
       message: userInput,
       history: messageHistory.map(message => ({
-        ...message,
+        sender: message.sender,
         text: stripHTML(message.text)
       }))
     }));
 
   };
-    let recognition;
 
-    const startDictation = () => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = "vi-VN";
-        recognition.start();
+  let recognition;
 
-        document.getElementById('mic').style.display = 'none';
-        document.getElementById('stop-listening').style.display = 'inline';
+  const startDictation = () => {
+    if(!check_is_mobile()){
+      Click_Sound();
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = "vi-VN";
+      recognition.start();
 
-        recognition.onresult = (e) => {
-          let interimTranscript = '';
-          let finalTranscript = '';
+      document.getElementById('mic').style.display = 'none';
+      document.getElementById('stop-listening').style.display = 'inline';
 
-          for (let i = 0; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-              finalTranscript += e.results[i][0].transcript;
-            } else {
-              interimTranscript += e.results[i][0].transcript;
-            }
+      recognition.onresult = (e) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = 0; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            finalTranscript += e.results[i][0].transcript;
+          } else {
+            interimTranscript += e.results[i][0].transcript;
           }
+        }
 
-          document.getElementById('user-input').value = finalTranscript + interimTranscript;
+        document.getElementById('user-input').value = finalTranscript + interimTranscript;
 
-          if (finalTranscript) {
-            recognition.stop();
-            sendMessage(true);
-            document.getElementById('stop-listening').style.display = 'none';
-            document.getElementById('mic').style.display = 'inline';
-          }
-        };
-
-        recognition.onerror = () => {
+        if (finalTranscript) {
           recognition.stop();
+          sendMessage(true);
           document.getElementById('stop-listening').style.display = 'none';
           document.getElementById('mic').style.display = 'inline';
-        };
-      }
-    };
+        }
+      };
 
-    const stopDictation = () => {
-      if (recognition) {
+      recognition.onerror = () => {
         recognition.stop();
         document.getElementById('stop-listening').style.display = 'none';
         document.getElementById('mic').style.display = 'inline';
+      };
+    }
+  };
+
+  const stopDictation = () => {
+    if (recognition) {
+      if(!check_is_mobile()){
+        Click_Sound();
       }
-    };
+      recognition.stop();
+      document.getElementById('stop-listening').style.display = 'none';
+      document.getElementById('mic').style.display = 'inline';
+    }
+  };
+
   return (
     <div className="app">
       <PwaPrompt />
+      <SettingsButton />
       <ChatBox
         messageHistory={messageHistory}
         speakText={speakText}
@@ -247,12 +302,19 @@ const deleteAllMessage = () => {
         removeMarkdown={removeMarkdown}
       />
       <InputBox
+        onHeightChange={handleHeightChange}
         deleteAllMessage={deleteAllMessage}
         sendMessage={sendMessage}
         startDictation={startDictation}
         stopDictation={stopDictation}
         stopSpeaking={stopSpeaking}
+        inputBoxRef={inputBoxRef}
       />
+      {showScrollButton && (
+        <button className="scroll-button" onClick={scrollToBottom} ref={scrollButtonRef}>
+          ⭣
+        </button>
+      )}
     </div>
   );
 };

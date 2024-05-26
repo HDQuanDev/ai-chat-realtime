@@ -1,39 +1,54 @@
 import React, { useEffect, useState } from 'react';
-
+import { Notification_Sound, Click_Sound, Success_Sound, Error_Sound } from './SoundEffects';
 const PwaPrompt = () => {
   const [isClosed, setIsClosed] = useState(false);
 
-  useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      if (isClosed) return;
+useEffect(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    if (isClosed) return;
 
-      e.preventDefault();
-      const pwaPrompt = document.getElementById('pwa-prompt');
-      const installButton = document.getElementById('install-button');
-      const closeButton = document.getElementById('close-button');
-
-      setTimeout(() => {
-        pwaPrompt.style.top = '20px';
-      }, 3000);
-
+    const main_click = document.getElementById('root');
+    const pwaPrompt = document.getElementById('pwa-prompt');
+    const installButton = document.getElementById('install-button');
+    const closeButton = document.getElementById('close-button');
+    var show = false;
+    if(main_click) {
+      main_click.addEventListener('click', () => {
+        e.preventDefault();
+        if(show) return;
+        show = true;
+        setTimeout(() => {
+          Notification_Sound();
+          pwaPrompt.style.top = '20px';
+        }, 2000);
+      });
+    }
+    main_click.addEventListener('click', () => {
+    if(installButton) {
       installButton.addEventListener('click', () => {
+        Click_Sound();
         pwaPrompt.style.top = '-100px';
         e.prompt();
         e.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the install prompt');
+            Success_Sound();
           } else {
-            console.log('User dismissed the install prompt');
+            Error_Sound();
           }
         });
       });
+    }
 
+    if(closeButton) {
       closeButton.addEventListener('click', () => {
+        Click_Sound();
         pwaPrompt.style.top = '-100px';
         setIsClosed(true);
       });
-    });
-  }, [isClosed]);
+    }
+  });
+});
+}, [isClosed]);
 
   return (
     <div id="pwa-prompt" className="pwa-prompt">

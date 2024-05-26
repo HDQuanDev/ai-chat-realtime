@@ -29,10 +29,11 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
           const textNoHtml = stripHTML(message.text_display);
           const textNoHtmlEscaped = escapeHtml(textNoHtml);
           const textSpeak = encodeURIComponent(textNoHtmlEscaped);
+          var text_display;
           if(message.sender === 'user') {
-            var text_display = message.text_display.replace(/\n/g, "<br>");
+             text_display = message.text_display.replace(/\n/g, "<br>");
           } else {
-            var text_display = message.text_display;
+             text_display = message.text_display;
           }
           return (
             <div key={index} className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}>
