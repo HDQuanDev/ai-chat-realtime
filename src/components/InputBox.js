@@ -71,8 +71,9 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, de
   return (
     <div id="input-box" ref={inputBoxRef}>
       <div className="input-area">
-        <button id="stop-speaking" style={{ display: 'none' }} onClick={stopSpeaking} className='stop-button'>🔇</button>
-        <button onClick={deleteAllMessage} id="delete_all_chat" className="clear-button">🗑️</button>
+        <button id="stop-speaking" style={{ display: 'none' }} onClick={stopSpeaking} className='stop-button' title='Dừng đọc' alt='Dừng đọc'>🔇</button>
+        <button onClick={startDictation} id="mic" title='Nhập bằng giọng nói' alt='Nhập bằng giọng nói'>🎤</button>
+        <button id="stop-listening" style={{ display: 'none' }} onClick={stopDictation} className='clear-button' title='Dừng nhận dạng giọng nói' alt='Dừng nhận dạng giọng nói'>🛑</button>
         <textarea
           ref={inputRef}
           id="user-input"
@@ -85,10 +86,10 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, de
             maxHeight: '150px', // Adjust the max height as needed
             overflowY: 'auto'
           }}
+          title='Nhập tin nhắn'
+          alt='Nhập tin nhắn'
         />
-        <button onClick={handleSendMessage} id="send">➤</button>
-        <button onClick={startDictation} id="mic">🎤</button>
-        <button id="stop-listening" style={{ display: 'none' }} onClick={stopDictation} className='clear-button'>🛑</button>
+        <button onClick={handleSendMessage} id="send" title='Gửi tin nhắn đi' alt='Gửi tin nhắn đi'>➤</button>
       </div>
       <div className='note'>Các câu trả lời của mô hình chỉ mang tính chất tham khảo, vui lòng kiểm tra thông tin trước khi sử dụng.</div>
     </div>

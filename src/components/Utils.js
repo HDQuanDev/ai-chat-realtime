@@ -40,15 +40,15 @@ export const speakText = (text) => {
     utterance.lang = "vi-VN";
     utterance.onstart = () => {
         document.getElementById('stop-speaking').style.display = 'inline';
-        document.getElementById('delete_all_chat').style.display = 'none';
+        document.getElementById('mic').style.display = 'none';
     };
     utterance.onend = () => {
         document.getElementById('stop-speaking').style.display = 'none';
-        document.getElementById('delete_all_chat').style.display = 'inline';
+        document.getElementById('mic').style.display = 'inline';
     };
     utterance.onerror = () => {
         document.getElementById('stop-speaking').style.display = 'none';
-        document.getElementById('delete_all_chat').style.display = 'inline';
+        document.getElementById('mic').style.display = 'inline';
     };
     window.speechSynthesis.speak(utterance);
 };
@@ -58,7 +58,7 @@ export const stopSpeaking = () => {
         Click_Sound();
         window.speechSynthesis.cancel();
         document.getElementById('stop-speaking').style.display = 'none';
-        document.getElementById('delete_all_chat').style.display = 'inline';
+        document.getElementById('mic').style.display = 'inline';
     }
 };
 
@@ -122,4 +122,8 @@ export const setDataToLocalStorage = (key, data) => {
         localStorage.setItem(key, JSON.stringify(data));
     }
     localStorage.setItem(key, data);
+}
+
+export const deleteDataFromLocalStorage = (key) => {
+    localStorage.removeItem(key);
 }

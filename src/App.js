@@ -38,8 +38,8 @@ const App = () => {
     }
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
-    showToast('Hệ Thống', 'Bạn có thể bật Sound Effects và Dark Mode trong phần Cài Đặt góc trên màn hình.', 'info');
-    showToast('Thông Báo', 'Phiên bản 0.6.Beta Build ID: 2024-05-26 By Hứa Đức Quân', 'info');
+    showToast('Hệ Thống', 'Bạn có thể thay đổi Mô Hình AI trong phần Cài Đặt góc trên màn hình.', 'info');
+    showToast('Thông Báo', 'Phiên bản 0.7.Beta Build ID: 2024-05-27 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -144,8 +144,9 @@ const handleHeightChange = (height) => {
     setMessageHistory([...messageHistory, newMessage]);
     localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
     Send_Message();
+    const modal_select = getDataFromLocalStorage('model');
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php?model=gemini-1.5-flash-latest', true);
+    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php?model=' + modal_select, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     
     let text = '';

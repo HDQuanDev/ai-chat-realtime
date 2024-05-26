@@ -103,14 +103,16 @@ body {
 
 .note {
   font-size: 12px;
-  color: #cacaca;
+  color: #131313;
   margin-top: 10px;
   /* Tạo khoảng cách giữa note và các phần tử khác */
   text-align: center;
   /* Canh giữa văn bản */
 }
 
-
+body.dark-mode .note {
+  color: #cacaca;
+}
 
 .message {
   margin: 5px;
@@ -391,7 +393,6 @@ body.dark-mode .scroll-button {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
 }
 /* code block styles */
-/* Styles for code blocks */
 pre {
   background-color: #f8f8f8;
   /* Light grey background */
@@ -403,9 +404,6 @@ pre {
   /* Horizontal scroll for long lines */
 }
 
-/* Styles for code syntax highlighting */
-/* Code block styles */
-/* Code block styling with a modern appearance */
 pre {
   background: #282c34;
   /* Dark background for better contrast */
@@ -420,6 +418,42 @@ pre {
   /* Subtle border */
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   font-size: 16px;
+}
+
+/* Additional styles for the code container */
+.code-container {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 0.5em 1em;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+.code-language {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #abb2bf;
+}
+
+.copy-code-button {
+  background: none;
+  border: none;
+  color: #abb2bf;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.copy-code-button:hover {
+  text-decoration: underline;
 }
 
 /* Styling for ul and li */
@@ -449,9 +483,7 @@ ul li code {
   /* Đệm cho nội dung bên trong thẻ code */
   font-family: 'Courier New', monospace;
   /* Font chữ cho thẻ code */
-  /* Màu chữ */
 }
-
 
 /* Styling for different types of code */
 pre code .keyword {
@@ -484,6 +516,14 @@ pre code .number {
   color: #dcdcaa;
 }
 
+/* Adjust pre to fit within the code container */
+.code-container pre {
+  margin: 0;
+  border-radius: 0 0 10px 10px;
+  border-top: none;
+}
+
+
 /* Yellow for numbers */
 
 /* Responsive touch */
@@ -511,7 +551,7 @@ button {
   /* Thêm viền với màu xanh */
   background-color: transparent;
   /* Làm nền trong suốt */
-  color: #007bff;
+  color: #1f1f1f;
   /* Màu chữ giống màu viền */
   cursor: pointer;
   border-radius: 5px;
@@ -521,6 +561,11 @@ button {
   border-radius: 5px;
   margin-right: 10px;
   /* Thêm hiệu ứng chuyển đổi */
+}
+
+body.dark-mode button {
+  color: #ffffff;
+  /* Thay đổi màu viền khi dark mode */
 }
 
 /* Hover effect cho nút button */
