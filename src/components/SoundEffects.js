@@ -8,7 +8,6 @@ const shouldPlaySound = () => {
 export const Send_Message = (stop = false) => {
   if (!shouldPlaySound()) return;
   const sound = new Audio('./assets/audio/happy-pop-2-185287.mp3');
-  sound.volume = 0.5;
   if (stop) {
     sound.pause();
   } else {
@@ -36,7 +35,6 @@ export const Typing_Message = (stop = false) => {
 export const Receive_Message = (stop = false) => {
   if (!shouldPlaySound()) return;
   const sound = new Audio('./assets/audio/new-notification-7-210334.mp3');
-  sound.volume = 0.5;
   if (stop) {
     sound.pause();
   } else {
