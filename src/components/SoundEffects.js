@@ -56,7 +56,7 @@ export const Notification_Sound = (stop = false) => {
 export const On_Off_Sound = (stop = false) => {
   if (!shouldPlaySound()) return;
   const sound = new Audio('./assets/audio/interface-button-154180.mp3');
-  sound.volume = 0.3;
+  sound.volume = 0.7;
   if (stop) {
     sound.pause();
   } else {
