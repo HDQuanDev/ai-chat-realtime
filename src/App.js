@@ -38,6 +38,7 @@ const App = () => {
     }
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
+    showToast('Hệ Thống', 'Bạn có thể bật Sound Effects và Dark Mode trong phần Cài Đặt góc trên màn hình.', 'info');
     showToast('Thông Báo', 'Phiên bản 0.6.Beta Build ID: 2024-05-26 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
