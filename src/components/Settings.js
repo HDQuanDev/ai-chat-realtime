@@ -77,22 +77,16 @@ const SettingsModal = ({ isOpen, onClose, isDarkMode, toggleDarkMode, isSoundEff
         </div>
         <br/><hr />
         <div className="settings-modal-header">
-          <h2>Change Log 0.7.Beta</h2>
+          <h2>Change Log 0.7.1.Beta</h2>
         </div>
         <div className="settings-modal-content">
             <p>1. Fix bug</p>
         </div>
         <div className="settings-modal-content">
-            <p>2. Edit sound effect</p>
+            <p>2. Update Sound Effect</p>
         </div>
         <div className="settings-modal-content">
-            <p>3. Add copy code</p>
-        </div>
-        <div className="settings-modal-content">
-            <p>4. Update UI</p>
-        </div>
-        <div className="settings-modal-content">
-            <p>5. Add new select Language Model</p>
+            <p>3. Update Check Status Server</p>
         </div>
         
         <div className='settings-modal-content'>

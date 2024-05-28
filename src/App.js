@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
+import CheckServer from './components/CheckServer';
 import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
 import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
 import './App.css';
@@ -39,7 +40,7 @@ const App = () => {
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
     showToast('Hệ Thống', 'Bạn có thể thay đổi Mô Hình AI trong phần Cài Đặt góc trên màn hình.', 'info');
-    showToast('Thông Báo', 'Phiên bản 0.7.Beta Build ID: 2024-05-27 By Hứa Đức Quân', 'info');
+    showToast('Thông Báo', 'Phiên bản 0.7.1.Beta Build ID: 2024-05-28 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -294,6 +295,7 @@ const handleHeightChange = (height) => {
 
   return (
     <div className="app">
+      <CheckServer />
       <PwaPrompt />
       <SettingsButton />
       <ChatBox
@@ -315,7 +317,7 @@ const handleHeightChange = (height) => {
       />
       {showScrollButton && (
         <button className="scroll-button" onClick={scrollToBottom} ref={scrollButtonRef}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-md m-1 text-token-text-primary"><path fill="currentColor" fill-rule="evenodd" d="M12 21a1 1 0 0 1-.707-.293l-7-7a1 1 0 1 1 1.414-1.414L11 17.586V4a1 1 0 1 1 2 0v13.586l5.293-5.293a1 1 0 0 1 1.414 1.414l-7 7A1 1 0 0 1 12 21" clip-rule="evenodd"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" className="icon-md m-1 text-token-text-primary"><path fill="currentColor" fillRule="evenodd" d="M12 21a1 1 0 0 1-.707-.293l-7-7a1 1 0 1 1 1.414-1.414L11 17.586V4a1 1 0 1 1 2 0v13.586l5.293-5.293a1 1 0 0 1 1.414 1.414l-7 7A1 1 0 0 1 12 21" clipRule="evenodd"></path></svg>
         </button>
       )}
     </div>
