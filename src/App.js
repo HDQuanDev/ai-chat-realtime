@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
-import CheckServer from './components/CheckServer';
 import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
 import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
 import './App.css';
