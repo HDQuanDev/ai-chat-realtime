@@ -295,7 +295,6 @@ const handleHeightChange = (height) => {
 
   return (
     <div className="app">
-      <CheckServer />
       <PwaPrompt />
       <SettingsButton />
       <ChatBox
