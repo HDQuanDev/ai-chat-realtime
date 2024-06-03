@@ -146,8 +146,9 @@ const handleHeightChange = (height) => {
     Send_Message();
     const modal_select = getDataFromLocalStorage('model');
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://cloud.qdevs.tech/ai/server.php?model=' + modal_select, true);
+    xhr.open('POST', 'https://api.quanhd.net/ai/server.php?model=' + modal_select, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.setRequestHeader('Referer', 'ai.qdevs.tech');
     
     let text = '';
     let save_text = '';
