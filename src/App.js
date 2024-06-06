@@ -39,7 +39,7 @@ const App = () => {
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
     showToast('Hệ Thống', 'Bạn có thể thay đổi Mô Hình AI trong phần Cài Đặt góc trên màn hình.', 'info');
-    showToast('Thông Báo', 'Phiên bản 0.7.2.Beta Build ID: 2024-06-03 By Hứa Đức Quân', 'info');
+    showToast('Thông Báo', 'Phiên bản 0.8.Beta Build ID: 2024-06-06 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
