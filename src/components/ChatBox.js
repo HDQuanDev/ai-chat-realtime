@@ -44,7 +44,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
   useEffect(() => {
     const handleCopyButtonClick = (event) => {
       if (event.target.classList.contains('copy-code-button')) {
-        const code = decodeURIComponent(event.target.getAttribute('data-code'));
+        const code = (event.target.getAttribute('data-code'));
         copyTextToClipboard(code);
       }
     };

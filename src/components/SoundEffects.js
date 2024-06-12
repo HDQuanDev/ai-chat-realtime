@@ -41,17 +41,17 @@ const playSound = (key, options = {}) => {
 };
 
 const audioFiles = {
-  'happy-pop': './assets/audio/happy-pop-2-185287.mp3',
-  'typing': './assets/audio/writing-a-text-message-41141.mp3',
-  'notification': './assets/audio/new-notification-7-210334.mp3',
-  'notif-sound': './assets/audio/notification.mp3',
-  'interface-button': './assets/audio/interface-button-154180.mp3',
-  'mouse-click': './assets/audio/button-click.mp3',
-  'open-doors': './assets/audio/open-doors-114615.mp3',
-  'door-close': './assets/audio/door-close-85789.mp3',
-  'success': './assets/audio/success-1-6297.mp3',
-  'error': './assets/audio/error-call-to-attention-129258.mp3',
-  'slide-down': './assets/audio/089048_woosh-slide-in-88642.mp3',
+  'happy-pop': '/assets/audio/happy-pop-2-185287.mp3',
+  'typing': '/assets/audio/writing-a-text-message-41141.mp3',
+  'notification': '/assets/audio/new-notification-7-210334.mp3',
+  'notif-sound': '/assets/audio/notification.mp3',
+  'interface-button': '/assets/audio/interface-button-154180.mp3',
+  'mouse-click': '/assets/audio/button-click.mp3',
+  'open-doors': '/assets/audio/open-doors-114615.mp3',
+  'door-close': '/assets/audio/door-close-85789.mp3',
+  'success': '/assets/audio/success-1-6297.mp3',
+  'error': '/assets/audio/error-call-to-attention-129258.mp3',
+  'slide-down': '/assets/audio/089048_woosh-slide-in-88642.mp3',
 };
 
 // Preload all audio files

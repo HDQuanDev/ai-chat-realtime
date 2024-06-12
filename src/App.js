@@ -8,8 +8,9 @@ import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
+import ShareButton from './components/ShareButton';
 import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage, randomString } from './components/Utils';
 import './App.css';
 
 const App = () => {
@@ -27,8 +28,13 @@ const App = () => {
     if (Sound_Effects == null) {
       setDataToLocalStorage('sound-effects', true);
     }
+
+    if (getDataFromLocalStorage('id_user') == null) {
+      setDataToLocalStorage('id_user', randomString(10));
+    }
+    
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         })
@@ -297,6 +303,7 @@ const handleHeightChange = (height) => {
     <div className="app">
       <PwaPrompt />
       <SettingsButton />
+      <ShareButton messageHistory={messageHistory} />
       <ChatBox
         messageHistory={messageHistory}
         speakText={speakText}

@@ -703,3 +703,27 @@ button:disabled:hover {
 }
 
 
+.share-button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  background: transparent;
+  color: #333;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.share-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+body.dark-mode .share-button {
+  color: #f7f7f7;
+}
