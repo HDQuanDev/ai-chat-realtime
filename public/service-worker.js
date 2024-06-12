@@ -1,4 +1,3 @@
-// service-worker.js
 const CACHE_NAME = 'my-cache';
 const urlsToCache = [
     '/',
@@ -15,8 +14,18 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-    // Chỉ xử lý các yêu cầu GET
+    // Only handle GET requests
     if (event.request.method !== 'GET') {
+        return;
+    }
+
+    // Check for unsupported schemes and filter file types
+    const url = new URL(event.request.url);
+    const fileExtension = url.pathname.split('.').pop();
+
+    const supportedFileTypes = ['js', 'css', 'png'];
+    if (!event.request.url.startsWith('http') && !event.request.url.startsWith('https') ||
+        !supportedFileTypes.includes(fileExtension)) {
         return;
     }
 
@@ -27,16 +36,16 @@ self.addEventListener('fetch', function (event) {
                 return response;
             }
 
-            // Quan trọng: Nhân bản yêu cầu
+            // Important: Clone the request
             const fetchRequest = event.request.clone();
 
             return fetch(fetchRequest).then(function (response) {
-                // Kiểm tra nếu chúng ta nhận được một phản hồi hợp lệ
+                // Check if we received a valid response
                 if (!response || response.status !== 200 || response.type !== 'basic') {
                     return response;
                 }
 
-                // Quan trọng: Nhân bản phản hồi
+                // Important: Clone the response
                 const responseToCache = response.clone();
 
                 caches.open(CACHE_NAME).then(function (cache) {
