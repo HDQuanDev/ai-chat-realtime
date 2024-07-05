@@ -77,13 +77,13 @@ const SettingsModal = ({ isOpen, onClose, isDarkMode, toggleDarkMode, isSoundEff
         </div>
         <br/><hr />
         <div className="settings-modal-header">
-          <h2>Change Log 0.8.Beta</h2>
+          <h2>Change Log 0.9.Beta</h2>
         </div>
         <div className="settings-modal-content">
             <p>1. Fix bug</p>
         </div>
         <div className="settings-modal-content">
-            <p>2. Update SoundEffects</p>
+            <p>2. Update Domain</p>
         </div>
         
         <div className='settings-modal-content'>
@@ -179,6 +179,7 @@ const SettingsButton = () => {
     if (messageHistory.length === 0) {
       Error_Sound();
       showToast('Thông Báo', 'Không có tin nhắn nào để xóa.', 'error');
+      showToast('Hệ Thống', 'Nếu bạn thấy tin nhắn này nhưng vẫn có tin nhắn hiển thị trên màn hình, vui lòng tải lại trang để cập nhật và thử lại.', 'info');
       return;
     }
 
@@ -211,6 +212,8 @@ const SettingsButton = () => {
         setMessageHistory([]);
         localStorage.removeItem('messageHistorySave');
         showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
+        //reload page
+        window.location.reload();
       } else if (result.isConfirmed) {
         Click_Sound();
         MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
