@@ -78,6 +78,7 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, de
           ref={inputRef}
           id="user-input"
           placeholder="Nhập tin nhắn..."
+          autoFocus
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

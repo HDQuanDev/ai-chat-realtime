@@ -75,6 +75,7 @@ const SettingsModal = ({
         Success_Sound();
         deleteAllMessages();
         showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
+        window.location.reload();
       } else if (result.isConfirmed) {
         Click_Sound();
         MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
