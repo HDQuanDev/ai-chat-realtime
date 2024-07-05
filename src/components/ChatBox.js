@@ -1,9 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+// ChatBox.js
+import React, { useRef, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { marked } from 'marked';
+import { MessageContext } from './MessageContext';
 
-const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, escapeHtml }) => {
+const ChatBox = ({ speakText, copyTextToClipboard, stripHTML, escapeHtml }) => {
   const messagesEndRef = useRef(null);
+  const { messageHistory } = useContext(MessageContext);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,7 +47,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
   useEffect(() => {
     const handleCopyButtonClick = (event) => {
       if (event.target.classList.contains('copy-code-button')) {
-        const code = (event.target.getAttribute('data-code'));
+        const code = decodeURIComponent(event.target.getAttribute('data-code'));
         copyTextToClipboard(code);
       }
     };
@@ -68,10 +71,10 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
           const textNoHtmlEscaped = escapeHtml(textNoHtml);
           const textSpeak = encodeURIComponent(textNoHtmlEscaped);
           let text_display;
-          if(message.sender === 'user') {
-             text_display = message.text_display.replace(/\n/g, "<br>");
+          if (message.sender === 'user') {
+            text_display = message.text_display.replace(/\n/g, "<br>");
           } else {
-             text_display = message.text_display;
+            text_display = message.text_display;
           }
 
           const processedHtml = insertCopyButtons(marked(text_display));
@@ -92,12 +95,10 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
 };
 
 ChatBox.propTypes = {
-  messageHistory: PropTypes.array.isRequired,
   speakText: PropTypes.func.isRequired,
   copyTextToClipboard: PropTypes.func.isRequired,
   stripHTML: PropTypes.func.isRequired,
   escapeHtml: PropTypes.func.isRequired,
-  removeMarkdown: PropTypes.func.isRequired,
 };
 
 export default ChatBox;

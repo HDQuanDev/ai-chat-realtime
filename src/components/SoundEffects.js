@@ -99,7 +99,7 @@ export const Notification_Sound = () => playSound('notif-sound', { volume: 0.5 }
 
 export const On_Off_Sound = () => playSound('interface-button', { volume: 0.7 });
 
-export const Click_Sound = () => playSound('mouse-click', { volume: 0.2 });
+export const Click_Sound = () => playSound('mouse-click', { volume: 0.8 });
 
 export const Open_Sound = () => playSound('open-doors');
 

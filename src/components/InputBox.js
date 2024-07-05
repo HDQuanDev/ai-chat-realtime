@@ -77,7 +77,7 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, de
         <textarea
           ref={inputRef}
           id="user-input"
-          placeholder="Type a message"
+          placeholder="Nhập tin nhắn..."
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
+import { MessageProvider } from './components/MessageContext';
 // import ShareButton from './components/ShareButton';
 import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
 import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage, randomString } from './components/Utils';
@@ -45,7 +46,7 @@ const App = () => {
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
     showToast('Hệ Thống', 'Bạn có thể thay đổi Mô Hình AI trong phần Cài Đặt góc trên màn hình.', 'info');
-    showToast('Thông Báo', 'Phiên bản 0.9.Beta Build ID: 2024-07-03 By Hứa Đức Quân', 'info');
+    showToast('Thông Báo', 'Phiên bản 1.0.Beta Build ID: 2024-07-03 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -300,6 +301,7 @@ const handleHeightChange = (height) => {
   };
 
   return (
+    <MessageProvider>
     <div className="app">
       <PwaPrompt />
       <SettingsButton />
@@ -326,6 +328,7 @@ const handleHeightChange = (height) => {
         </button>
       )}
     </div>
+    </MessageProvider>
   );
 };
 
