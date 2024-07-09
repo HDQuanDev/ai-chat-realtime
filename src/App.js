@@ -45,7 +45,7 @@ const App = () => {
     }
 
     showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
-    showToast('Hệ Thống', 'Bạn có thể thay đổi Mô Hình AI trong phần Cài Đặt góc trên màn hình.', 'info');
+    showToast('Hệ Thống', 'Tôi chuẩn bị giới thiệu phiên bản Official 1.1 với ngôn ngữ giao diện, hiệu suất hoàn toàn mới trong vài ngày tới.', 'info');
     showToast('Thông Báo', 'Phiên bản 1.0.Beta Build ID: 2024-07-03 By Hứa Đức Quân', 'info');
 
     if (isDarkMode) {
