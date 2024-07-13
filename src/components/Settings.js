@@ -287,6 +287,7 @@ const SettingsModal = ({
           <li>Cập Nhật Lại Toàn Bộ Giao Diện Sử Dụng TailwindCSS</li>
           <li>Thêm Chức Năng Cài Đặt & Chia Sẻ ID Chat</li>
           <li>Thêm Chức Năng Đồng Bộ Dữ Liệu Chat Theo ID</li>
+          <li>Tối Ưu Hóa Phản Hồi & Câu Trả Lời Của Mô Hình</li>
           <li>Tối Ưu Hóa Hiệu Suất & Sửa Lỗi</li>
         </ul>
         <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.1.Official - © 13/07/2024 By Hứa Đức Quân</span>
