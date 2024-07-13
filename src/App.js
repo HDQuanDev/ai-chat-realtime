@@ -164,13 +164,13 @@ const App = () => {
     aiMessage_4.textContent = 'AI';
   
     const aiMessage_5 = document.createElement('div');
-    aiMessage_5.className = 'max-w-[90%] sm:max-w-[75%] md:max-w-[60%] lg:max-w-[50%] xl:max-w-[40%]';
+    aiMessage_5.className = 'max-w-[95%] sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[65%]';
   
     const aiMessage_6 = document.createElement('div');
     aiMessage_6.className = 'px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700 hover:shadow-lg';
   
     const aiMessage_7 = document.createElement('div');
-    aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-sm sm:text-base';
+    aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-sm lg:text-base xl:text-base';
   
     // Append elements in the correct order
     aiMessage_6.appendChild(aiMessage_7);
