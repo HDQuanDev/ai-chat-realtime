@@ -123,14 +123,14 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
                   </span>
                 </div>
                 <div className={`
-                  max-w-[90%] sm:max-w-[75%] md:max-w-[60%] lg:max-w-[50%] xl:max-w-[40%]
+                  max-w-[95%] sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[65%]
                 `}>
                   <div className={`px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out
                     ${message.sender === 'user'
                       ? 'bg-gradient-to-r from-blue-200 to-blue-100 text-blue-900 dark:from-blue-600 dark:to-indigo-700 hover:from-blue-300 hover:to-indigo-500 dark:text-white dark:hover:from-blue-700 dark:hover:to-indigo-800'
                       : 'bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700'
                     } hover:shadow-lg`}>
-                    <div dangerouslySetInnerHTML={{ __html: processedHtml }} className="prose prose-sm max-w-none dark:prose-invert text-sm sm:text-base" />
+                    <div dangerouslySetInnerHTML={{ __html: processedHtml }} className="prose prose-sm max-w-none dark:prose-invert text-sm lg:text-base xl:text-base" />
                     <div className="flex justify-end mt-2 space-x-2">
                       <button 
                         onClick={() => speakText(textSpeak)} 
