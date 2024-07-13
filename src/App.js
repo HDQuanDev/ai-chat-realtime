@@ -27,12 +27,13 @@ const App = () => {
     const Sound_Effects = getDataFromLocalStorage('sound-effects');
     if (Sound_Effects == null) {
       setDataToLocalStorage('sound-effects', true);
-      window.location.reload(true);
+      
     }
 
     if(!getDataFromLocalStorage('install')){
       localStorage.clear();
       setDataToLocalStorage('install', true);
+      window.location.reload(true);
     }
     
     if ('serviceWorker' in navigator) {
