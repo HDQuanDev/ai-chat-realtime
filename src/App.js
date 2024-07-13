@@ -183,13 +183,20 @@ const App = () => {
     return aiMessage;
   };
   
-  const chat_id = getDataFromLocalStorage('id_user');
   const sendToServer = (userInput, aiMessage, autoSpeech) => {
     Typing_Message();
   
     const modal_select = getDataFromLocalStorage('model');
+    const current_chat_id = getDataFromLocalStorage('id_user');
+  
+    if (!current_chat_id) {
+      showToast('Lỗi', 'Không tìm thấy Chat ID. Vui lòng cập nhật ID Chat.', 'error');
+      Typing_Message(true);
+      return;
+    }
+  
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${process.env.REACT_APP_API_URL_CHAT}?model=${modal_select}`, true);
+    xhr.open('POST', `${process.env.REACT_APP_API_URL_CHAT}?model=${encodeURIComponent(modal_select)}`, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
   
     let text = '';
@@ -204,14 +211,19 @@ const App = () => {
   
       lines.forEach(line => {
         if (line.trim().startsWith('data: ')) {
-          const json = JSON.parse(line.replace('data: ', ''));
-          if (json.text) {
-            const markdown = json.text;
-            text += markdown;
-            save_text += markdown;
+          try {
+            const json = JSON.parse(line.replace('data: ', ''));
+            if (json.text) {
+              const markdown = json.text;
+              text += markdown;
+              save_text += markdown;
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
           }
         }
       });
+  
       aiMessage.querySelector('.prose').innerHTML = marked(text) + `<br><hr><span class="code-language font-mono text-xs text-gray-600 dark:text-gray-300">AI đang trả lời, vui lòng kiểm tra thông tin trước khi sử dụng...</span>`;
       document.getElementById('chat-box').appendChild(aiMessage);
       aiMessage.scrollIntoView({ behavior: 'smooth' });
@@ -246,17 +258,19 @@ const App = () => {
     xhr.onerror = () => {
       showToast('Thông Báo', 'Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại sau.', 'error');
       Typing_Message(true);
-      document.getElementById('chat-box').removeChild(aiMessage);
+      if (document.getElementById('chat-box').contains(aiMessage)) {
+        document.getElementById('chat-box').removeChild(aiMessage);
+      }
       ['send', 'mic', 'user-input'].forEach(enableButton);
     };
-    
-    xhr.send(JSON.stringify({
+  
+    const payload = JSON.stringify({
       message: userInput,
-      chat_id: chat_id,
-    }));
+      chat_id: current_chat_id,
+    });
+  
+    xhr.send(payload);
   };
-  
-  
   
   let recognition;
 
