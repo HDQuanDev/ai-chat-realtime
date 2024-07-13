@@ -2,17 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import ChatBox from './components/ChatBox';
 import InputBox from './components/InputBox';
 import PwaPrompt from './components/PWAPrompt';
-import {showToast} from './components/Toast';
+import { showToast } from './components/Toast';
 import { marked } from 'marked';
 import Swal from 'sweetalert2';
 import useDarkMode from './components/useDarkMode';
 import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
 import { MessageProvider } from './components/MessageContext';
+import IntroductionModal from './components/IntroductionModal';
 // import ShareButton from './components/ShareButton';
-import { Send_Message, Receive_Message, Typing_Message, Click_Sound,Success_Sound, Error_Sound, Slide_Down_Sound } from './components/SoundEffects';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage, randomString } from './components/Utils';
-import './App.css';
+import LoadChat from './components/LoadChat';
+import { Receive_Message, Typing_Message, Click_Sound, Success_Sound, Error_Sound } from './components/SoundEffects';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
 
 const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
@@ -20,18 +21,18 @@ const App = () => {
   });
 
   const isDarkMode = useDarkMode();
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const inputBoxRef = useRef(null);
   const scrollButtonRef = useRef(null);
-
   useEffect(() => {
     const Sound_Effects = getDataFromLocalStorage('sound-effects');
     if (Sound_Effects == null) {
       setDataToLocalStorage('sound-effects', true);
+      window.location.reload(true);
     }
 
-    if (getDataFromLocalStorage('id_user') == null) {
-      setDataToLocalStorage('id_user', randomString(10));
+    if(!getDataFromLocalStorage('install')){
+      localStorage.clear();
+      setDataToLocalStorage('install', true);
     }
     
     if ('serviceWorker' in navigator) {
@@ -43,47 +44,29 @@ const App = () => {
           console.log('ServiceWorker registration failed: ', err);
         });
     }
-
-    showToast('Thông Báo', 'Lịch sử tin nhắn đã được tải.', 'success');
-    showToast('Hệ Thống', 'Tôi chuẩn bị giới thiệu phiên bản Official 1.1 với ngôn ngữ giao diện, hiệu suất hoàn toàn mới trong vài ngày tới.', 'info');
-    showToast('Thông Báo', 'Phiên bản 1.0.Beta Build ID: 2024-07-03 By Hứa Đức Quân', 'info');
+    
+    showToast('Thông Báo', 'Phiên bản 1.1.Official đã được cập nhật, để xem thêm thông tin vui lòng truy cập mục Thông Tin trong Cài Đặt.', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
     } else {
       document.body.classList.remove('dark-mode');
     }
-
-    const handleScroll = () => {
-      const bottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
-      setShowScrollButton(!bottom);
-    };
-    window.addEventListener('scroll', handleScroll);
-
-    return () => window.removeEventListener('scroll', handleScroll);
   }, [isDarkMode]);
 
- // Khởi tạo state để lưu trữ chiều cao
-
-const handleHeightChange = (height) => {
-  console.log(height);
-  if (scrollButtonRef.current && height < '175') {
-    var px;
-    if(check_is_mobile()){
-      px = 80;
-    }else{
-      px = 65;
+  const handleHeightChange = (height) => {
+    console.log(height);
+    if (scrollButtonRef.current && height < '175') {
+      var px;
+      if(check_is_mobile()){
+        px = 80;
+      }else{
+        px = 65;
+      }
+      console.log('scrollButtonRef.current', scrollButtonRef.current);
+      scrollButtonRef.current.style.setProperty('bottom', `${height + px}px`, 'important');
     }
-    console.log('scrollButtonRef.current', scrollButtonRef.current);
-    scrollButtonRef.current.style.setProperty('bottom', `${height + px}px`, 'important');
-  }
-};
-
-  const scrollToBottom = () => {
-    Slide_Down_Sound();
-    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
   };
-
 
   const deleteAllMessage = () => {
     const MySwal = withReactContent(Swal);
@@ -121,16 +104,17 @@ const handleHeightChange = (height) => {
         Success_Sound();
         setMessageHistory([]);
         localStorage.removeItem('messageHistorySave');
+        localStorage.removeItem('id_user');
         showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
+        window.location.reload(true);
       } else if (result.isConfirmed) {
         Click_Sound();
         MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
-      }else{
+      } else {
         Click_Sound();
       }
     });
   };
-
 
   const sendMessage = (autoSpeech = false) => {
     const userInput = document.getElementById('user-input').value;
@@ -138,40 +122,85 @@ const handleHeightChange = (height) => {
       showToast('Thông Báo', 'Vui lòng nhập tin nhắn.', 'error');
       return;
     }
-    disableButton('send');
-    disableButton('mic');
-    disableButton('user-input');
+    
+    // Disable input and buttons
+    ['send', 'mic', 'user-input'].forEach(disableButton);
+    
     const newMessage = {
       sender: 'user',
       text: userInput,
       text_display: userInput
     };
-    const aiMessage = document.createElement('div');
+  
+    // Add user's message to the chat
+    const updatedHistory = [...messageHistory, newMessage];
+    setMessageHistory(updatedHistory);
+    localStorage.setItem('messageHistorySave', JSON.stringify(updatedHistory));
+  
+    // Create AI message container
+    const aiMessage = createAIMessageElement();
+    aiMessage.querySelector('.prose').innerHTML = 'Vui lòng chờ...';
+    document.getElementById('add-message').appendChild(aiMessage);
     aiMessage.scrollIntoView({ behavior: 'smooth' });
-    setMessageHistory([...messageHistory, newMessage]);
-    localStorage.setItem('messageHistorySave', JSON.stringify([...messageHistory, newMessage]));
-    Send_Message();
+  
+    // Send message to server
+    sendToServer(userInput, aiMessage, autoSpeech);
+  };
+  
+  const createAIMessageElement = () => {
+    const aiMessage = document.createElement('div');
+    aiMessage.className = 'flex flex-col items-start mb-4';
+  
+    const aiMessage_2 = document.createElement('div');
+    aiMessage_2.className = 'flex items-center mb-1 flex-row';
+  
+    const aiMessage_3 = document.createElement('div');
+    aiMessage_3.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-green-500 mr-2';
+    aiMessage_3.textContent = '🤖';
+  
+    const aiMessage_4 = document.createElement('span');
+    aiMessage_4.className = 'text-sm font-medium text-gray-700 dark:text-gray-300';
+    aiMessage_4.textContent = 'AI';
+  
+    const aiMessage_5 = document.createElement('div');
+    aiMessage_5.className = 'max-w-[90%] sm:max-w-[75%] md:max-w-[60%] lg:max-w-[50%] xl:max-w-[40%]';
+  
+    const aiMessage_6 = document.createElement('div');
+    aiMessage_6.className = 'px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700 hover:shadow-lg';
+  
+    const aiMessage_7 = document.createElement('div');
+    aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-sm sm:text-base';
+  
+    // Append elements in the correct order
+    aiMessage_6.appendChild(aiMessage_7);
+    aiMessage_5.appendChild(aiMessage_6);
+    aiMessage_2.appendChild(aiMessage_3);
+    aiMessage_2.appendChild(aiMessage_4);
+    aiMessage.appendChild(aiMessage_2);
+    aiMessage.appendChild(aiMessage_5);
+  
+    return aiMessage;
+  };
+  
+  const chat_id = getDataFromLocalStorage('id_user');
+  const sendToServer = (userInput, aiMessage, autoSpeech) => {
+    Typing_Message();
+  
     const modal_select = getDataFromLocalStorage('model');
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.quanhd.net/ai/server.php?model=' + modal_select, true);
+    xhr.open('POST', `${process.env.REACT_APP_API_URL_CHAT}?model=${modal_select}`, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    xhr.setRequestHeader('Referer', 'ai.qdevs.tech');
-    
+  
     let text = '';
     let save_text = '';
     let lastIndex = 0;
-
-    aiMessage.className = 'message ai-message';
-    aiMessage.textContent = 'Vui lòng chờ... ';
-    document.getElementById('chat-box').appendChild(aiMessage);
-    Typing_Message();
-    xhr.onprogress = function () {
-      
+  
+    xhr.onprogress = () => {
       const newResponse = xhr.responseText.substring(lastIndex);
       lastIndex = xhr.responseText.length;
-
+  
       const lines = newResponse.split('\n').filter(line => line.trim() !== '');
-
+  
       lines.forEach(line => {
         if (line.trim().startsWith('data: ')) {
           const json = JSON.parse(line.replace('data: ', ''));
@@ -182,66 +211,52 @@ const handleHeightChange = (height) => {
           }
         }
       });
-
-      let text_no_html_ai = stripHTML(text);
-      text_no_html_ai = removeMarkdown(text_no_html_ai);
-      text_no_html_ai = escapeHtml(text_no_html_ai);
-      text_no_html_ai = encodeURIComponent(text_no_html_ai);
-
-      aiMessage.innerHTML = marked(text) + `<hr><button onclick="speakText('${text_no_html_ai}')">🔊</button> <button onclick="copyTextToClipboard('${text_no_html_ai}')">📋</button>`;
+      aiMessage.querySelector('.prose').innerHTML = marked(text) + `<br><hr><span class="code-language font-mono text-xs text-gray-600 dark:text-gray-300">AI đang trả lời, vui lòng kiểm tra thông tin trước khi sử dụng...</span>`;
       document.getElementById('chat-box').appendChild(aiMessage);
       aiMessage.scrollIntoView({ behavior: 'smooth' });
     };
-
-    xhr.onload = function () {
+  
+    xhr.onload = () => {
       Typing_Message(true);
       Receive_Message();
       document.getElementById('chat-box').removeChild(aiMessage);
-      let save_text_storage = removeMarkdown(save_text);
-      save_text_storage = stripHTML(save_text_storage);
-      save_text_storage = save_text_storage.replace(/(\r\n|\n|\r)/gm, " ");
-
+  
+      let save_text_storage = stripHTML(removeMarkdown(save_text)).replace(/(\r\n|\n|\r)/gm, " ");
+  
       const aiResponse = {
         sender: 'ai',
         text: save_text_storage,
-        text_display: marked(save_text)
+        text_display: save_text
       };
-
-      setMessageHistory((prev) => {
-        const updatedHistory = [...prev, aiResponse];
-        localStorage.setItem('messageHistorySave', JSON.stringify(updatedHistory));
-        return updatedHistory;
-      });
-
+      console.log(aiResponse);
+      const storedHistory = JSON.parse(localStorage.getItem('messageHistorySave')) || [];
+      const updatedHistory = [...storedHistory, aiResponse];
+      setMessageHistory(updatedHistory);
+      localStorage.setItem('messageHistorySave', JSON.stringify(updatedHistory));
+      console.log(messageHistory);
+  
       if (autoSpeech) {
-        const textToSpeak = removeMarkdown(aiResponse.text);
-        speakText(textToSpeak);
+        speakText(removeMarkdown(aiResponse.text));
       }
-
-      enableButton('send');
-      enableButton('mic');
-      enableButton('user-input');
+  
+      ['send', 'mic', 'user-input'].forEach(enableButton);
     };
-
-    xhr.onerror = function () {
-      // Use Toast instead of alert
+  
+    xhr.onerror = () => {
       showToast('Thông Báo', 'Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại sau.', 'error');
+      Typing_Message(true);
       document.getElementById('chat-box').removeChild(aiMessage);
-      enableButton('send');
-      enableButton('mic');
-      enableButton('user-input');
+      ['send', 'mic', 'user-input'].forEach(enableButton);
     };
-
+    
     xhr.send(JSON.stringify({
       message: userInput,
-      history: messageHistory.map(message => ({
-        sender: message.sender,
-        text: stripHTML(message.text)
-      }))
+      chat_id: chat_id,
     }));
-
   };
-
+  
+  
+  
   let recognition;
 
   const startDictation = () => {
@@ -302,32 +317,32 @@ const handleHeightChange = (height) => {
 
   return (
     <MessageProvider>
-    <div className="app">
-      <PwaPrompt />
-      <SettingsButton />
-      <ChatBox
-        messageHistory={messageHistory}
-        speakText={speakText}
-        copyTextToClipboard={(text) => copyTextToClipboard(text)}
-        stripHTML={stripHTML}
-        escapeHtml={escapeHtml}
-        removeMarkdown={removeMarkdown}
-      />
-      <InputBox
-        onHeightChange={handleHeightChange}
-        deleteAllMessage={deleteAllMessage}
-        sendMessage={sendMessage}
-        startDictation={startDictation}
-        stopDictation={stopDictation}
-        stopSpeaking={stopSpeaking}
-        inputBoxRef={inputBoxRef}
-      />
-      {showScrollButton && (
-        <button className="scroll-button" onClick={scrollToBottom} ref={scrollButtonRef}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" className="icon-md m-1 text-token-text-primary"><path fill="currentColor" fillRule="evenodd" d="M12 21a1 1 0 0 1-.707-.293l-7-7a1 1 0 1 1 1.414-1.414L11 17.586V4a1 1 0 1 1 2 0v13.586l5.293-5.293a1 1 0 0 1 1.414 1.414l-7 7A1 1 0 0 1 12 21" clipRule="evenodd"></path></svg>
-        </button>
-      )}
-    </div>
+      <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex-grow overflow-hidden relative">
+          <LoadChat setMessageHistory={setMessageHistory} />
+          <IntroductionModal />
+          <SettingsButton className="absolute top-4 right-4 z-10"
+          deleteAllMessage={deleteAllMessage}
+          />
+          <PwaPrompt />
+          <ChatBox
+            messageHistory={messageHistory}
+            speakText={speakText}
+            copyTextToClipboard={(text) => copyTextToClipboard(text)}
+            stripHTML={stripHTML}
+            escapeHtml={escapeHtml}
+            removeMarkdown={removeMarkdown}
+          />
+        </div>
+        <InputBox
+          onHeightChange={handleHeightChange}
+          sendMessage={sendMessage}
+          startDictation={startDictation}
+          stopDictation={stopDictation}
+          stopSpeaking={stopSpeaking}
+          inputBoxRef={inputBoxRef}
+        />
+      </div>
     </MessageProvider>
   );
 };
