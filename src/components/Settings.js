@@ -97,7 +97,7 @@ const SettingsModal = ({
     }).then((result) => {
       if (result.isConfirmed) {
         // Gửi request đến API để kiểm tra ID
-        fetch(`${process.env.REACT_APP_API_URL}/CheckID`, {
+        fetch(`${process.env.REACT_APP_API_URL}/CheckChatExist`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
