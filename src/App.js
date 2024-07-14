@@ -10,6 +10,7 @@ import withReactContent from 'sweetalert2-react-content';
 import SettingsButton from './components/Settings';
 import { MessageProvider } from './components/MessageContext';
 import IntroductionModal from './components/IntroductionModal';
+import Notifications from './components/Notifications';
 // import ShareButton from './components/ShareButton';
 import LoadChat from './components/LoadChat';
 import { Receive_Message, Typing_Message, Click_Sound, Success_Sound, Error_Sound } from './components/SoundEffects';
@@ -45,8 +46,6 @@ const App = () => {
           console.log('ServiceWorker registration failed: ', err);
         });
     }
-    
-    showToast('Thông Báo', 'Phiên bản 1.1.Official đã được cập nhật, để xem thêm thông tin vui lòng truy cập mục Thông Tin trong Cài Đặt.', 'info');
 
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -117,20 +116,18 @@ const App = () => {
     });
   };
 
-  const sendMessage = (autoSpeech = false) => {
-    const userInput = document.getElementById('user-input').value;
-    if (!userInput){
-      showToast('Thông Báo', 'Vui lòng nhập tin nhắn.', 'error');
+  const sendMessage = (userInput, uploadedImage = null, autoSpeech = false) => {
+    if (!userInput.trim() && !uploadedImage) {
+      showToast('Thông Báo', 'Vui lòng nhập tin nhắn hoặc đính kèm ảnh.', 'error');
       return;
     }
-    
+  
     // Disable input and buttons
     ['send', 'mic', 'user-input'].forEach(disableButton);
-    
+  
     const newMessage = {
       sender: 'user',
-      text: userInput,
-      text_display: userInput
+      text_display: userInput,
     };
   
     // Add user's message to the chat
@@ -145,7 +142,7 @@ const App = () => {
     aiMessage.scrollIntoView({ behavior: 'smooth' });
   
     // Send message to server
-    sendToServer(userInput, aiMessage, autoSpeech);
+    sendToServer(userInput, aiMessage, uploadedImage, autoSpeech);
   };
   
   const createAIMessageElement = () => {
@@ -170,7 +167,7 @@ const App = () => {
     aiMessage_6.className = 'px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700 hover:shadow-lg';
   
     const aiMessage_7 = document.createElement('div');
-    aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-sm lg:text-base xl:text-base';
+    aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-base';
   
     // Append elements in the correct order
     aiMessage_6.appendChild(aiMessage_7);
@@ -183,7 +180,7 @@ const App = () => {
     return aiMessage;
   };
   
-  const sendToServer = (userInput, aiMessage, autoSpeech) => {
+  const sendToServer = (userInput, aiMessage, uploadedImage = null, autoSpeech) => {
     Typing_Message();
   
     const modal_select = getDataFromLocalStorage('model');
@@ -234,11 +231,8 @@ const App = () => {
       Receive_Message();
       document.getElementById('chat-box').removeChild(aiMessage);
   
-      let save_text_storage = stripHTML(removeMarkdown(save_text)).replace(/(\r\n|\n|\r)/gm, " ");
-  
       const aiResponse = {
         sender: 'ai',
-        text: save_text_storage,
         text_display: save_text
       };
       console.log(aiResponse);
@@ -267,6 +261,7 @@ const App = () => {
     const payload = JSON.stringify({
       message: userInput,
       chat_id: current_chat_id,
+      image: uploadedImage ? uploadedImage : undefined
     });
   
     xhr.send(payload);
@@ -336,6 +331,7 @@ const App = () => {
         <div className="flex-grow overflow-hidden relative">
           <LoadChat setMessageHistory={setMessageHistory} />
           <IntroductionModal />
+          <Notifications />
           <SettingsButton className="absolute top-4 right-4 z-10"
           deleteAllMessage={deleteAllMessage}
           />

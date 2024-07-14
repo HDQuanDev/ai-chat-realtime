@@ -29,6 +29,7 @@ const IntroductionModal = () => {
         <ol>
           <li><strong>Giao diện mới</strong>: Được thiết kế lại hoàn toàn mới, sử dụng Tailwind CSS nhằm mang lại trải nghiệm tốt nhất cho người dùng</li>
           <li><strong>Nâng cấp AI</strong>: Mô hình ngôn ngữ tự nhiên đã được cải thiện, giúp trả lời câu hỏi chính xác hơn</li>
+          <li><strong>Xử lý ảnh</strong>: Bạn có thể tải ảnh lên và chia sẻ với AI để nhận phản hồi</li>
           <li><strong>Chia sẻ ID Chat</strong>: Bạn có thể chia sẻ ID chat của mình với thiết bị khác để tiếp tục trò chuyện và đồng bộ dữ liệu một cách dễ dàng</li>
           <li><strong>Sửa lỗi</strong>: Sửa một số lỗi nhỏ và cải thiện hiệu suất như Xóa Toàn Bộ Tin Nhắn, Chế Độ Tối, và nhiều hơn nữa</li>
         </ol>

@@ -35,7 +35,7 @@ const LoadChat = ({ setMessageHistory }) => {
 
             const formattedMessages = data.map((item) => ({
               sender: item.sender === 'user' ? 'user' : 'ai',
-              text: item.message,
+              image_url: item.file_url,
               text_display: item.message,
             }));
 

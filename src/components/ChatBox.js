@@ -1,13 +1,51 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { marked } from 'marked';
-//import { Slide_Down_Sound } from './SoundEffects';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github-dark.css'; // Giao diện tương đương với Prism Tomorrow Night
+import 'highlight.js/styles/github-dark.css';
+
+const ImagePopup = ({ imageUrl, onClose, altText }) => {
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-90 transition-opacity duration-300"
+      onClick={onClose}
+    >
+      <div 
+        className="relative max-w-5xl w-full h-full flex items-center justify-center animate-zoom-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={imageUrl}
+          alt={altText}  // Updated alt attribute
+          className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+        />
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white bg-gray-800 bg-opacity-50 hover:bg-opacity-75 focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center transition-all duration-300 transform hover:scale-110"
+          aria-label="Close popup"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 
 const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, escapeHtml }) => {
   const messagesEndRef = useRef(null);
   const chatBoxRef = useRef(null);
+  const [popupImage, setPopupImage] = useState(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollToBottom = () => {
@@ -20,7 +58,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
     const handleScroll = () => {
       if (chatBoxRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = chatBoxRef.current;
-        const bottomThreshold = 100; // Khoảng cách từ cuối để hiển thị nút
+        const bottomThreshold = 100;
         setShowScrollButton(scrollHeight - scrollTop - clientHeight > bottomThreshold);
       }
     };
@@ -41,7 +79,6 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
     messageHistory = [];
   }
 
-  // Setup marked với Highlight.js
   marked.setOptions({
     highlight: function (code, lang) {
       const language = hljs.getLanguage(lang) ? lang : 'plaintext';
@@ -82,7 +119,6 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
       });
     };
 
-    // Áp dụng Highlight.js highlighting cho các phần tử code hiện có
     hljs.highlightAll();
   }, [messageHistory]);
 
@@ -130,7 +166,27 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
                       ? 'bg-gradient-to-r from-blue-200 to-blue-100 text-blue-900 dark:from-blue-600 dark:to-indigo-700 hover:from-blue-300 hover:to-indigo-500 dark:text-white dark:hover:from-blue-700 dark:hover:to-indigo-800'
                       : 'bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700'
                     } hover:shadow-lg`}>
-                    <div dangerouslySetInnerHTML={{ __html: processedHtml }} className="prose prose-sm max-w-none dark:prose-invert text-sm lg:text-base xl:text-base" />
+                    {message.image_url && (
+                      <div className="mb-4">
+                        <div className="relative group">
+                          <img
+                            src={message.image_url}
+                            alt="User uploaded content"
+                            className="mx-auto w-full h-auto max-w-xs rounded-lg shadow-md transition-all duration-300 ease-in-out group-hover:shadow-lg dark:shadow-gray-800 cursor-pointer"
+                            onClick={() => setPopupImage(message.image_url)}
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                            <button
+                              onClick={() => setPopupImage(message.image_url)}
+                              className="hidden group-hover:block bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-md hover:bg-gray-100 transition-all duration-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+                            >
+                              Xem full
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div dangerouslySetInnerHTML={{ __html: processedHtml }} className="prose prose-sm max-w-none dark:prose-invert text-base" />
                     <div className="flex justify-end mt-2 space-x-2">
                       <button 
                         onClick={() => speakText(textSpeak)} 
@@ -169,6 +225,14 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
             <span className="text-sm font-medium">Xuống cuối</span>
           </button>
         </div>
+      )}
+
+      {popupImage && (
+        <ImagePopup
+          imageUrl={popupImage}
+          onClose={() => setPopupImage(null)}
+          altText="User uploaded content"
+        />
       )}
     </div>
   );
