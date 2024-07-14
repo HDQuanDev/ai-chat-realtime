@@ -5,6 +5,7 @@ const LoadChat = ({ setMessageHistory }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const initialMessageShown = useRef(false);
+  const eventSourceRef = useRef(null);
 
   useEffect(() => {
     const chatId = localStorage.getItem('id_user');
@@ -14,12 +15,13 @@ const LoadChat = ({ setMessageHistory }) => {
       return; // Không làm gì nếu không có id_user
     }
 
-    let eventSource;
+    const timeoutDuration = 5 * 60 * 1000; // 5 minutes
+    let timeoutId;
 
     const connectEventSource = () => {
-      eventSource = new EventSource(`${process.env.REACT_APP_API_URL}/SyncData?chat_id=${chatId}`);
+      eventSourceRef.current = new EventSource(`${process.env.REACT_APP_API_URL}/SyncData?chat_id=${chatId}`);
 
-      eventSource.onmessage = (event) => {
+      eventSourceRef.current.onmessage = (event) => {
         const response = JSON.parse(event.data);
 
         if (response.status === 'success') {
@@ -28,7 +30,7 @@ const LoadChat = ({ setMessageHistory }) => {
           } else if (response.code === 404) {
             console.log('No data available');
 
-            //clear local storage id_user
+            // Clear local storage id_user
             localStorage.removeItem('id_user');
           } else {
             const data = response.data;
@@ -62,26 +64,35 @@ const LoadChat = ({ setMessageHistory }) => {
         }
       };
 
-      eventSource.onerror = () => {
+      eventSourceRef.current.onerror = () => {
         handleError('Lỗi kết nối, vui lòng tải lại trang để thử lại');
 
-        if (eventSource) { // Đóng kết nối nếu có
-          eventSource.close();
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
         }
       };
+
+      // Set a timeout to disconnect and reconnect the EventSource after the specified duration
+      timeoutId = setTimeout(() => {
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          connectEventSource(); // Reconnect after timeout
+        }
+      }, timeoutDuration);
     };
 
     const handleError = (errorMessage) => {
       setError(errorMessage);
       setLoading(false);
       showToast('Lỗi', errorMessage, 'error');
-      if (eventSource) eventSource.close();
+      if (eventSourceRef.current) eventSourceRef.current.close();
     };
 
     connectEventSource();
 
     return () => {
-      if (eventSource) eventSource.close();
+      if (eventSourceRef.current) eventSourceRef.current.close();
+      clearTimeout(timeoutId);
     };
   }, [setMessageHistory]);
 
