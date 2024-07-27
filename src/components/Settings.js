@@ -282,16 +282,17 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.2</h2>
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3</h2>
         <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
           <li>Cập Nhật Lại Toàn Bộ Giao Diện Sử Dụng TailwindCSS</li>
           <li>Thêm Chức Năng Cài Đặt & Chia Sẻ ID Chat</li>
           <li>Thêm Chức Năng Đồng Bộ Dữ Liệu Chat Theo ID</li>
           <li>Thêm Chức Năng Gửi Ảnh & Nhận Diện Văn Bản Trong Ảnh</li>
+          <li>Thêm Danh Sách Trò Chuyện Mới Cho Phép Bạn Tạo Và Chuyển Đổi Giữa Các Trò Chuyện</li>
           <li>Tối Ưu Hóa Phản Hồi & Câu Trả Lời Của Mô Hình</li>
           <li>Tối Ưu Hóa Hiệu Suất & Sửa Lỗi</li>
         </ul>
-        <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.2 - © 13/07/2024 By Hứa Đức Quân</span>
+        <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3 - © 28/07/2024 By Hứa Đức Quân</span>
       </div>
     );
   }

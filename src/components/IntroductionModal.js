@@ -31,6 +31,8 @@ const IntroductionModal = () => {
           <li><strong>Nâng cấp AI</strong>: Mô hình ngôn ngữ tự nhiên đã được cải thiện, giúp trả lời câu hỏi chính xác hơn</li>
           <li><strong>Xử lý ảnh</strong>: Bạn có thể tải ảnh lên và chia sẻ với AI để nhận phản hồi</li>
           <li><strong>Chia sẻ ID Chat</strong>: Bạn có thể chia sẻ ID chat của mình với thiết bị khác để tiếp tục trò chuyện và đồng bộ dữ liệu một cách dễ dàng</li>
+          <li><strong>Lưu trữ tin nhắn</strong>: Tất cả tin nhắn sẽ được lưu trữ trên máy chủ, giúp bạn truy cập lại dễ dàng hơn</li>
+          <li><strong>Chủ đề chat</strong>: Bạn có thể tạo chủ đề chat mới giúp bạn có thể trò chuyện với nhiều luồng khác nhau</li>
           <li><strong>Sửa lỗi</strong>: Sửa một số lỗi nhỏ và cải thiện hiệu suất như Xóa Toàn Bộ Tin Nhắn, Chế Độ Tối, và nhiều hơn nữa</li>
         </ol>
       `

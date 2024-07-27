@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { marked } from 'marked';
+import { marked, use } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
+import { clear } from 'toastr';
 
 const ImagePopup = ({ imageUrl, onClose, altText }) => {
   useEffect(() => {
@@ -44,6 +45,7 @@ const ImagePopup = ({ imageUrl, onClose, altText }) => {
 
 const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, escapeHtml }) => {
   const messagesEndRef = useRef(null);
+  const [checkTopicAi, setCheckTopicAi] = useState(false);
   const chatBoxRef = useRef(null);
   const [popupImage, setPopupImage] = useState(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -121,7 +123,34 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
 
     hljs.highlightAll();
   }, [messageHistory]);
-
+  useEffect(() => {
+    const checkActiveChat = () => {
+      const get_active_chat = localStorage.getItem('active_chat');
+      if (get_active_chat !== null && get_active_chat !== '' && get_active_chat !== undefined) {
+        setCheckTopicAi(true);
+      }
+    };
+  
+    const handleStorageChange = (event) => {
+      if (event.key === 'active_chat') {
+        checkActiveChat();
+      }
+    };
+  
+    // Kiểm tra giá trị của active_chat khi component được mount
+    checkActiveChat();
+  
+    // Theo dõi sự thay đổi của localStorage từ các tab khác
+    window.addEventListener('storage', handleStorageChange);
+  
+    // Theo dõi sự thay đổi của localStorage trong cùng một tab
+    const intervalId = setInterval(checkActiveChat, 100);
+  
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+    };
+  }, []);
   return (
     <div 
       id="chat-box" 
@@ -137,6 +166,9 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
                 Tôi là mô hình ngôn ngữ tự nhiên được huấn luyện để trả lời các câu hỏi về mọi thứ. 
                 Nếu bạn có bất kỳ câu hỏi nào, hãy hỏi tôi!
               </p>
+              {checkTopicAi === false ? (
+                <p className="text-red-600 dark:text-red-300 text-xl mt-4">Vui lòng chọn đoạn chat có sẵn hoặc tạo đoạn chat mới để bắt đầu trò chuyện với AI.</p>
+              ) : ( <p className="text-red-600 dark:text-red-300"> </p> )}
             </div>
           </div>
         ) : (
@@ -213,7 +245,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
       </div>
       
       {showScrollButton && (
-        <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="fixed bottom-32 right-5 transform -translate-x-1/2 z-10">
           <button
             onClick={scrollToBottom}
             className="bg-blue-500 hover:bg-blue-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-full px-4 py-2 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-indigo-400 flex items-center space-x-2"
@@ -222,7 +254,6 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
-            <span className="text-sm font-medium">Xuống cuối</span>
           </button>
         </div>
       )}

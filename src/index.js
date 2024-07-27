@@ -11,6 +11,7 @@ if (root !== null) {
       <Routes>
         <Route path="/share/:id" element={<App />} />
         <Route path="/" element={<App />} />
+        <Route path="/topic/:id" element={<App />} />
       </Routes>
     </Router>
   );

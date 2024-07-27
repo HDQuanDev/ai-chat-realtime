@@ -6,9 +6,23 @@ const LoadChat = ({ setMessageHistory }) => {
   const [error, setError] = useState(null);
   const initialMessageShown = useRef(false);
   const eventSourceRef = useRef(null);
+  const [activeChat, setActiveChat] = useState(localStorage.getItem('active_chat'));
 
   useEffect(() => {
-    const chatId = localStorage.getItem('id_user');
+    const intervalId = setInterval(() => {
+      const currentActiveChat = localStorage.getItem('active_chat');
+      if (currentActiveChat !== activeChat) {
+        setLoading(true);
+        setError(null);
+        setActiveChat(currentActiveChat);
+      }
+    }, 100); // Kiểm tra mỗi giây một lần
+
+    return () => clearInterval(intervalId);
+  }, [activeChat]);
+
+  useEffect(() => {
+    const chatId = localStorage.getItem('active_chat');
 
     if (!chatId) {
       setLoading(false);
@@ -18,6 +32,20 @@ const LoadChat = ({ setMessageHistory }) => {
     const timeoutDuration = 5 * 60 * 1000; // 5 minutes
     let timeoutId;
 
+    const run = () => {
+      const intervalId = setInterval(() => {
+        const get_active_chat = localStorage.getItem('active_chat');
+        
+        if (get_active_chat !== null && get_active_chat !== '' && get_active_chat !== undefined) {
+          setLoading(true);
+          setError(null);
+          connectEventSource();
+          clearInterval(intervalId); // Sử dụng intervalId để dừng interval
+        }
+      }, 1000);
+    };
+    
+
     const connectEventSource = () => {
       eventSourceRef.current = new EventSource(`${process.env.REACT_APP_API_URL}/SyncData?chat_id=${chatId}`);
 
@@ -26,12 +54,7 @@ const LoadChat = ({ setMessageHistory }) => {
 
         if (response.status === 'success') {
           if (response.code === 304) {
-            console.log('No updates');
           } else if (response.code === 404) {
-            console.log('No data available');
-
-            // Clear local storage id_user
-            localStorage.removeItem('id_user');
           } else {
             const data = response.data;
 
@@ -58,8 +81,6 @@ const LoadChat = ({ setMessageHistory }) => {
         } else {
           handleError('Lỗi khi lấy dữ liệu từ server: ' + response.message);
           if(response.code === 404){
-            localStorage.removeItem('id_user');
-            localStorage.removeItem('messageHistorySave');
           }
         }
       };
@@ -76,7 +97,7 @@ const LoadChat = ({ setMessageHistory }) => {
       timeoutId = setTimeout(() => {
         if (eventSourceRef.current) {
           eventSourceRef.current.close();
-          connectEventSource(); // Reconnect after timeout
+          run(); // Reconnect after timeout
         }
       }, timeoutDuration);
     };
@@ -88,13 +109,13 @@ const LoadChat = ({ setMessageHistory }) => {
       if (eventSourceRef.current) eventSourceRef.current.close();
     };
 
-    connectEventSource();
+    run();
 
     return () => {
       if (eventSourceRef.current) eventSourceRef.current.close();
       clearTimeout(timeoutId);
     };
-  }, [setMessageHistory]);
+  }, [activeChat, setMessageHistory]);
 
   if (!localStorage.getItem('id_user')) {
     return null; // Không render gì nếu không có id_user

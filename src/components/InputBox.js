@@ -25,6 +25,7 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
   const inputRef = useRef(null);
   const inputBoxRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [checkTopicAi, setCheckTopicAi] = useState(false);
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -132,12 +133,41 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
     setUploadedImage(null);
   };
 
+  useEffect(() => {
+    const checkActiveChat = () => {
+      const get_active_chat = localStorage.getItem('active_chat');
+      if (get_active_chat !== null && get_active_chat !== '' && get_active_chat !== undefined) {
+        setCheckTopicAi(true);
+      }
+    };
+  
+    const handleStorageChange = (event) => {
+      if (event.key === 'active_chat') {
+        checkActiveChat();
+      }
+    };
+  
+    // Kiểm tra giá trị của active_chat khi component được mount
+    checkActiveChat();
+  
+    // Theo dõi sự thay đổi của localStorage từ các tab khác
+    window.addEventListener('storage', handleStorageChange);
+  
+    // Theo dõi sự thay đổi của localStorage trong cùng một tab
+    const intervalId = setInterval(checkActiveChat, 100);
+  
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+    };
+  }, []);
+
 
   return (
     <div
       id="input-box"
       ref={inputBoxRef}
-      className="sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3 shadow-lg transition-all duration-300"
+      className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3 shadow-lg transition-all duration-300 ${checkTopicAi ? '' : 'pointer-events-none opacity-50'}`}
     >
       <div className="max-w-3xl mx-auto">
         <div className="relative flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg py-2 px-4 focus-within:ring-2 focus-within:ring-blue-400 dark:focus-within:ring-blue-600 transition-all duration-300">

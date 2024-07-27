@@ -11,32 +11,43 @@ import SettingsButton from './components/Settings';
 import { MessageProvider } from './components/MessageContext';
 import IntroductionModal from './components/IntroductionModal';
 import Notifications from './components/Notifications';
-// import ShareButton from './components/ShareButton';
+import ChatList from './components/ListChat';
+import CheckData from './components/CheckData';
 import LoadChat from './components/LoadChat';
 import { Receive_Message, Typing_Message, Click_Sound, Success_Sound, Error_Sound } from './components/SoundEffects';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, setDataToLocalStorage } from './components/Utils';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage } from './components/Utils';
 
 const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
     return JSON.parse(localStorage.getItem('messageHistorySave')) || [];
   });
+  const [isChatListOpen, setIsChatListOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  const toggleChatList = () => setIsChatListOpen(!isChatListOpen);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsDesktop(true);
+        setIsChatListOpen(true);
+      } else {
+        setIsDesktop(false);
+      }
+    };
 
+    window.addEventListener('resize', handleResize);
+
+    // Check screen size when component mounts
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   const isDarkMode = useDarkMode();
   const inputBoxRef = useRef(null);
   const scrollButtonRef = useRef(null);
   useEffect(() => {
-    const Sound_Effects = getDataFromLocalStorage('sound-effects');
-    if (Sound_Effects == null) {
-      setDataToLocalStorage('sound-effects', true);
-      
-    }
-
-    if(!getDataFromLocalStorage('install')){
-      localStorage.clear();
-      setDataToLocalStorage('install', true);
-      window.location.reload(true);
-    }
-    
+ 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
@@ -184,7 +195,7 @@ const App = () => {
     Typing_Message();
   
     const modal_select = getDataFromLocalStorage('model');
-    const current_chat_id = getDataFromLocalStorage('id_user');
+    const current_chat_id = getDataFromLocalStorage('active_chat');
   
     if (!current_chat_id) {
       showToast('Lỗi', 'Không tìm thấy Chat ID. Vui lòng cập nhật ID Chat.', 'error');
@@ -327,35 +338,62 @@ const App = () => {
 
   return (
     <MessageProvider>
+      <CheckData />
       <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="flex-grow overflow-hidden relative">
-          <LoadChat setMessageHistory={setMessageHistory} />
-          <IntroductionModal />
-          <Notifications />
-          <SettingsButton className="absolute top-4 right-4 z-10"
-          deleteAllMessage={deleteAllMessage}
-          />
-          <PwaPrompt />
-          <ChatBox
-            messageHistory={messageHistory}
-            speakText={speakText}
-            copyTextToClipboard={(text) => copyTextToClipboard(text)}
-            stripHTML={stripHTML}
-            escapeHtml={escapeHtml}
-            removeMarkdown={removeMarkdown}
-          />
+        {/* Header với nút toggle cho mobile */}
+        <div className="bg-blue-500 dark:bg-gray-700 p-2 text-white md:hidden">
+          <button onClick={toggleChatList} className="p-2 focus:outline-none">
+            ☰ Mở danh sách trò chuyện
+          </button>
         </div>
-        <InputBox
-          onHeightChange={handleHeightChange}
-          sendMessage={sendMessage}
-          startDictation={startDictation}
-          stopDictation={stopDictation}
-          stopSpeaking={stopSpeaking}
-          inputBoxRef={inputBoxRef}
-        />
+  
+        <div className="flex flex-1 overflow-hidden">
+          {/* ChatList */}
+          <ChatList isOpen={isChatListOpen} toggleChatList={toggleChatList} />
+          
+          {/* Main content area */}
+          <div
+            className={`flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900 transition-all duration-300 ease-in-out ${
+              isChatListOpen ? 'md:ml-0' : 'md:-ml-80'
+            }`}
+          >
+            {!isChatListOpen && isDesktop && (
+              <button
+                onClick={toggleChatList}
+                className="absolute top-4 left-4 p-2 bg-blue-500 dark:bg-gray-700 text-white rounded-md focus:outline-none z-10"
+              >
+                ☰ Mở danh sách trò chuyện
+              </button>
+            )}
+            <div className="flex-1 overflow-y-auto">
+              <LoadChat setMessageHistory={setMessageHistory} />
+              <IntroductionModal />
+              <Notifications />
+              <SettingsButton className="absolute top-4 right-4 z-10" deleteAllMessage={deleteAllMessage} />
+              <PwaPrompt />
+              <ChatBox
+                messageHistory={messageHistory}
+                speakText={speakText}
+                copyTextToClipboard={(text) => copyTextToClipboard(text)}
+                stripHTML={stripHTML}
+                escapeHtml={escapeHtml}
+                removeMarkdown={removeMarkdown}
+              />
+            </div>
+            <InputBox
+              onHeightChange={handleHeightChange}
+              sendMessage={sendMessage}
+              startDictation={startDictation}
+              stopDictation={stopDictation}
+              stopSpeaking={stopSpeaking}
+              inputBoxRef={inputBoxRef}
+            />
+          </div>
+        </div>
       </div>
     </MessageProvider>
   );
+  
 };
 
 export default App;
