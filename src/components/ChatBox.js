@@ -1,9 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { marked, use } from 'marked';
+import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
-import { clear } from 'toastr';
 
 const ImagePopup = ({ imageUrl, onClose, altText }) => {
   useEffect(() => {

@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# Thông Tin
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Đây là 1 project Simple của [Hứa Đức Quân](https://www.facebook.com/quancp72h) được sử dụng ReactJS và TailWindCss.\
+Project này được xây dựng với mục đích học tập và thực hành.
 
-## Available Scripts
+**Lưu Ý:** Project này chỉ bao gồm Font-End và không có Back-End.
 
-In the project directory, you can run:
+## Danh Sách File
 
-### `npm start`
+- `src`: Thư mục chứa mã nguồn của project.
+- `src/components`: Thư mục chứa các component của project.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Công Nghệ Sử Dụng
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- [ReactJS](https://reactjs.org/): Thư viện JavaScript dùng để xây dựng giao diện người dùng.
+- [TailWindCss](https://tailwindcss.com/): Framework CSS dùng để thiết kế giao diện người dùng.
+- Và một số thư viện khác của ReactJS.
 
-### `npm test`
+## Hướng Dẫn Chạy Project
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Để chạy project, bạn cần cài đặt NodeJS tại [đây](https://nodejs.org/en/) và Git tại [đây](https://git-scm.com/).\
+Sau khi cài đặt xong, bạn cần clone project về máy bằng lệnh sau:
 
-### `npm run build`
+```bash
+git clone https://github.com/HDQuanDev/ai-chat-realtime.git
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Sau khi clone xong, bạn cần cài đặt các package cần thiết cho project bằng lệnh sau:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+cd ai-chat-realtime
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Tiếp theo, bạn chỉ cần chạy project bằng lệnh sau:
 
-### `npm run eject`
+```bash
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Cuối cùng, mở trình duyệt và truy cập vào địa chỉ [http://localhost:3000](http://localhost:3000) để xem project.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Liên Hệ
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Nếu bạn có bất kỳ thắc mắc hoặc góp ý nào, hãy liên hệ với mình qua:
+- Facebook: [Hứa Đức Quân](https://www.facebook.com/quancp72h)

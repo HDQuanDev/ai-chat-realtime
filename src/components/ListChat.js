@@ -116,7 +116,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
       if (eventSourceRef.current) eventSourceRef.current.close();
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChatSelect = (chatCode) => {
     setActiveChat(chatCode);
