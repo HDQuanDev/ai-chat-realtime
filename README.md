@@ -9,6 +9,7 @@ Project này được xây dựng với mục đích học tập và thực hàn
 
 - `src`: Thư mục chứa mã nguồn của project.
 - `src/components`: Thư mục chứa các component của project.
+- `.env`: File chứa các biến môi trường của project bạn có thể thay đổi nếu bạn có Back-End của riêng mình ở đây.
 
 ## Công Nghệ Sử Dụng
 
