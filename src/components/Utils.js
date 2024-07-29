@@ -136,3 +136,25 @@ export const randomString = (length) => {
     }
     return result;
 }
+
+export const getTitleByCode = (code) => {
+    // Lấy dữ liệu từ localStorage
+    const chats = localStorage.getItem('chats');
+    
+    // Kiểm tra nếu dữ liệu không tồn tại hoặc không hợp lệ
+    if (!chats) {
+        return "QChat AI";
+    }
+    
+    try {
+      // Chuyển đổi dữ liệu JSON thành mảng
+      const chatArray = JSON.parse(chats);
+      
+      // Tìm đối tượng có mã code khớp
+      const chat = chatArray.find(chat => chat.code === code);
+      
+      return chat ? chat.title : null;
+    } catch (error) {
+        return "QChat AI";
+    }
+  };

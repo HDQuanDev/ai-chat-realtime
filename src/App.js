@@ -15,7 +15,7 @@ import ChatList from './components/ListChat';
 import CheckData from './components/CheckData';
 import LoadChat from './components/LoadChat';
 import { Receive_Message, Typing_Message, Click_Sound, Success_Sound, Error_Sound } from './components/SoundEffects';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage } from './components/Utils';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, getTitleByCode } from './components/Utils';
 
 const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
@@ -338,60 +338,69 @@ const App = () => {
 
   return (
     <MessageProvider>
-      <CheckData />
-      <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
-        {/* Header với nút toggle cho mobile */}
-        <div className="bg-blue-500 dark:bg-gray-700 p-2 text-white md:hidden">
-          <button onClick={toggleChatList} className="p-2 focus:outline-none">
-            ☰ Mở danh sách trò chuyện
-          </button>
-        </div>
-  
-        <div className="flex flex-1 overflow-hidden">
-          {/* ChatList */}
-          <ChatList isOpen={isChatListOpen} toggleChatList={toggleChatList} />
-          
-          {/* Main content area */}
-          <div
-            className={`flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900 transition-all duration-300 ease-in-out ${
-              isChatListOpen ? 'md:ml-0' : 'md:-ml-80'
-            }`}
+  <CheckData />
+  <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
+    {/* Header với nút toggle cho mobile */}
+    <div className="bg-blue-600 dark:bg-gray-800 p-3 text-white md:hidden flex items-center justify-between">
+    <button onClick={toggleChatList} className="p-2 focus:outline-none">
+        ☰
+      </button>
+      <h1 className="text-lg font-semibold text-left">{getTitleByCode(getDataFromLocalStorage('active_chat'))}</h1>
+      <SettingsButton className="absolute top-4 right-4 z-10" deleteAllMessage={deleteAllMessage} />
+    </div>
+
+    <SettingsButton 
+  className="absolute top-4 right-4 z-10 hidden md:block" 
+  deleteAllMessage={deleteAllMessage} 
+/>
+
+    <div className="flex flex-1 overflow-hidden">
+      {/* ChatList */}
+      <ChatList isOpen={isChatListOpen} toggleChatList={toggleChatList} />
+
+      {/* Main content area */}
+      <div
+        className={`flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900 transition-transform duration-300 ease-in-out ${
+          isChatListOpen ? 'transform-none' : 'transform md:-translate-x-80'
+        }`}
+      >
+
+        {!isChatListOpen && isDesktop && (
+          <button
+            onClick={toggleChatList}
+            className="absolute top-4 left-4 p-2 bg-blue-500 dark:bg-gray-700 text-white rounded-md focus:outline-none z-10"
           >
-            {!isChatListOpen && isDesktop && (
-              <button
-                onClick={toggleChatList}
-                className="absolute top-4 left-4 p-2 bg-blue-500 dark:bg-gray-700 text-white rounded-md focus:outline-none z-10"
-              >
-                ☰ Mở danh sách trò chuyện
-              </button>
-            )}
-            <div className="flex-1 overflow-y-auto">
-              <LoadChat setMessageHistory={setMessageHistory} />
-              <IntroductionModal />
-              <Notifications />
-              <SettingsButton className="absolute top-4 right-4 z-10" deleteAllMessage={deleteAllMessage} />
-              <PwaPrompt />
-              <ChatBox
-                messageHistory={messageHistory}
-                speakText={speakText}
-                copyTextToClipboard={(text) => copyTextToClipboard(text)}
-                stripHTML={stripHTML}
-                escapeHtml={escapeHtml}
-                removeMarkdown={removeMarkdown}
-              />
-            </div>
-            <InputBox
-              onHeightChange={handleHeightChange}
-              sendMessage={sendMessage}
-              startDictation={startDictation}
-              stopDictation={stopDictation}
-              stopSpeaking={stopSpeaking}
-              inputBoxRef={inputBoxRef}
-            />
-          </div>
+            ☰
+          </button>
+        )}
+        <div className="flex-1 overflow-y-auto relative">
+          <LoadChat setMessageHistory={setMessageHistory} />
+          <IntroductionModal />
+          <Notifications />
+          
+          <PwaPrompt />
+          <ChatBox
+            messageHistory={messageHistory}
+            speakText={speakText}
+            copyTextToClipboard={(text) => copyTextToClipboard(text)}
+            stripHTML={stripHTML}
+            escapeHtml={escapeHtml}
+            removeMarkdown={removeMarkdown}
+          />
         </div>
+        <InputBox
+          onHeightChange={handleHeightChange}
+          sendMessage={sendMessage}
+          startDictation={startDictation}
+          stopDictation={stopDictation}
+          stopSpeaking={stopSpeaking}
+          inputBoxRef={inputBoxRef}
+        />
       </div>
-    </MessageProvider>
+    </div>
+  </div>
+</MessageProvider>
+
   );
   
 };

@@ -7,9 +7,11 @@ import Swal from 'sweetalert2';
 
 const ListChat = ({ isOpen, toggleChatList }) => {
   const [chats, setChats] = useState([]);
+  const [filteredChats, setFilteredChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createdChat, setCreatedChat] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const initialMessageShown = useRef(false);
   const eventSourceRef = useRef(null);
   const navigate = useNavigate();
@@ -22,15 +24,14 @@ const ListChat = ({ isOpen, toggleChatList }) => {
     const topicId = currentPath.split('/').pop();
     if (topicId !== null && topicId !== '') {
       setActiveChat(topicId);
-    }else if (localStorage.getItem('active_chat')) {
+    } else if (localStorage.getItem('active_chat')) {
       setActiveChat(localStorage.getItem('active_chat'));
     }
 
-    if(currentPath === '/' && localStorage.getItem('active_chat')) {
+    if (currentPath === '/' && localStorage.getItem('active_chat')) {
       navigate(`/topic/${localStorage.getItem('active_chat')}`);
     }
     // console.log('Current Path:', currentPath);
-
 
     const chatId = localStorage.getItem('id_user');
 
@@ -56,7 +57,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
             } else {
               setError('No data available');
             }
-          } else if(response.code === 900) {
+          } else if (response.code === 900) {
             setCreatedChat(true);
             setError('Chưa có chủ đề chat nào, hãy tạo chủ đề chat mới');
           } else {
@@ -104,7 +105,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
       setError(errorMessage);
       setLoading(false);
       if (eventSourceRef.current) eventSourceRef.current.close();
-      
+
       // Sử dụng dữ liệu từ localStorage khi có lỗi
       const savedChats = JSON.parse(localStorage.getItem('chats') || '[]');
       setChats(savedChats);
@@ -117,6 +118,18 @@ const ListChat = ({ isOpen, toggleChatList }) => {
       clearTimeout(timeoutId);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredChats(chats);
+    } else {
+      setFilteredChats(
+        chats.filter((chat) =>
+          chat.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }, [chats, searchTerm]);
 
   const handleChatSelect = (chatCode) => {
     setActiveChat(chatCode);
@@ -141,28 +154,48 @@ const ListChat = ({ isOpen, toggleChatList }) => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <div className={`
       fixed md:static top-0 left-0 h-full w-64 md:w-80 
       bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-      shadow-lg transition-transform duration-300 ease-in-out z-20
-      ${isOpen ? 'translate-x-0' : '-translate-x-full md:-translate-x-full'}
+      shadow-lg transition-all duration-300 ease-in-out z-20
+      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
     `}>
-      <div className="p-3 bg-blue-500 dark:bg-gray-700 text-white flex justify-between items-center">
-        <h2 className="font-bold">Lịch sử trò chuyện</h2><hr/>
-        {/* create topic chat */}
-        <button onClick={createTopic} className="focus:outline-none" title="Tạo chủ đề chat">
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      <div className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-gray-700 dark:to-gray-800 text-white">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-xl font-bold">Lịch sử trò chuyện</h2>
+          <div className="flex space-x-2">
+            <button onClick={createTopic} className="focus:outline-none hover:bg-blue-600 dark:hover:bg-gray-600 p-1 rounded-full transition-colors duration-200" title="Tạo chủ đề chat">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </button>
+            <button onClick={toggleChatList} className="focus:outline-none hover:bg-blue-600 dark:hover:bg-gray-600 p-1 rounded-full transition-colors duration-200 md:hidden">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div className="relative">
+          <input 
+            type="text" 
+            placeholder="Tìm kiếm chủ đề..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 bg-white dark:bg-gray-700 rounded-full text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500"
+          />
+          <svg className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-        </button>
-        <button onClick={toggleChatList} className="focus:outline-none">
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}></path>
-          </svg>
-        </button>
+        </div>
       </div>
-      <div className="overflow-y-auto h-[calc(100%-250px)] xl:h-[calc(100%-200px)]">
+
+      <div className="overflow-y-auto h-[calc(100%-380px)] xl:h-[calc(100%-320px)] px-2">
         {loading && (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
@@ -173,8 +206,8 @@ const ListChat = ({ isOpen, toggleChatList }) => {
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
             <p className="ml-2 text-gray-600 dark:text-gray-400">Đang tạo chủ đề chat...</p>
-            </div>
-            )}
+          </div>
+        )}
         {error && (
           <div className="flex flex-col items-center justify-center h-full text-center p-4">
             <svg className="w-12 h-12 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -183,7 +216,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
             <p className="text-red-500 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300"
             >
               Tải lại trang
             </button>
@@ -191,40 +224,29 @@ const ListChat = ({ isOpen, toggleChatList }) => {
         )}
         {createdChat && (
           <div className="flex flex-col items-center justify-center h-full text-center p-4">
-          <svg
-            className="w-12 h-12 text-blue-500 mb-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 16h-1v-4h-1m1-4h.01M12 18v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <p className="text-blue-500 mb-4">Bạn chưa có chủ đề chat nào, hãy tạo chủ đề chat mới bằng cách nhấn vào nút + ở phía trên hoặc nhấn vào nút bên dưới để tạo chủ đề chat mới</p>
-          <button
-            onClick={createTopic}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Tạo chủ đề chat mới
-          </button>
-        </div>        
+            <svg className="w-12 h-12 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 18v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-blue-500 mb-4">Bạn chưa có chủ đề chat nào. Hãy tạo chủ đề chat mới!</p>
+            <button
+              onClick={createTopic}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-300"
+            >
+              Tạo chủ đề chat mới
+            </button>
+          </div>        
         )}
         {!loading && !error && (
-          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {chats.map((chat) => (
+          <ul className="space-y-2 mt-2">
+            {filteredChats.map((chat) => (
               <li 
                 key={chat.code} 
-                className={`p-3 flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer
-                  ${activeChat === chat.code  ? 'bg-blue-100 dark:bg-blue-900' : ''}
+                className={`p-3 rounded-lg flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200
+                  ${activeChat === chat.code ? 'bg-blue-100 dark:bg-blue-900 shadow-md' : ''}
                 `}
                 onClick={() => handleChatSelect(chat.code)}
               >
-                <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center text-white font-bold">
                   {chat.title.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -238,18 +260,21 @@ const ListChat = ({ isOpen, toggleChatList }) => {
           </ul>
         )}
       </div>
+
       <UpgradePackage 
-  onUpgrade={() => Swal.fire({
-    title: 'Ủng Hộ Tôi Qua QRCode',
-    html: `
-      <img src="https://img.vietqr.io/image/MB-0919982762-compact.png" class="mx-auto" />
-      <p>Số Tài Khoản: 0919982762</p>
-      <p>Chủ tài khoản: Hứa Đức Quân</p>
-      <p>Ngân hàng: MB Bank</p>
-    `,
-    icon: 'info'
-  })} 
-/>
+        onUpgrade={() => Swal.fire({
+          title: 'Ủng Hộ Tôi Qua QRCode',
+          html: `
+            <img src="https://img.vietqr.io/image/MB-0919982762-compact.png" class="mx-auto" />
+            <p class="mt-2">Số Tài Khoản: 0919982762</p>
+            <p>Chủ tài khoản: Hứa Đức Quân</p>
+            <p>Ngân hàng: MB Bank</p>
+          `,
+          icon: 'info',
+          confirmButtonText: 'Đóng',
+          confirmButtonColor: '#3085d6',
+        })} 
+      />
     </div>
   );
 };

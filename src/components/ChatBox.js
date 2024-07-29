@@ -154,19 +154,19 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
     <div 
       id="chat-box" 
       ref={chatBoxRef}
-      className="h-full overflow-auto p-4 space-y-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 transition-all duration-300 relative"
+      className="h-full overflow-auto p-4 space-y-6 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 transition-all duration-300 relative"
     >
-      <div className="flex flex-col space-y-4 p-3 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-200 dark:scrollbar-thumb-indigo-400 dark:scrollbar-track-gray-700 scrollbar-thumb-rounded scrollbar-track-rounded leading-relaxed text-base/loose" id="add-message">
+      <div className="flex flex-col space-y-6 p-3 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 dark:scrollbar-thumb-blue-600 dark:scrollbar-track-gray-800 scrollbar-thumb-rounded scrollbar-track-rounded leading-relaxed text-base/loose" id="add-message">
         {messageHistory.length === 0 ? (
           <div className="flex items-center justify-center flex-grow">
-            <div className="text-center p-8 bg-gradient-to-r from-white to-blue-50 dark:from-gray-800 dark:to-indigo-900 rounded-lg shadow-2xl max-w-md transform transition-all duration-300 hover:scale-105 border-2 border-blue-200 dark:border-indigo-600">
-              <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">Chào mừng!</h2>
-              <p className="text-gray-600 dark:text-gray-300">
+            <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md transform transition-all duration-300 hover:scale-102 border border-blue-200 dark:border-blue-700">
+              <h2 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-400 dark:to-indigo-500">Chào mừng!</h2>
+              <p className="text-gray-700 dark:text-gray-300 mb-6">
                 Tôi là mô hình ngôn ngữ tự nhiên được huấn luyện để trả lời các câu hỏi về mọi thứ. 
                 Nếu bạn có bất kỳ câu hỏi nào, hãy hỏi tôi!
               </p>
               {checkTopicAi === false ? (
-                <p className="text-red-600 dark:text-red-300 text-xl mt-4">Vui lòng chọn đoạn chat có sẵn hoặc tạo đoạn chat mới để bắt đầu trò chuyện với AI.</p>
+                <p className="text-red-600 dark:text-red-400 text-xl font-semibold">Vui lòng chọn đoạn chat có sẵn hoặc tạo đoạn chat mới để bắt đầu trò chuyện với AI.</p>
               ) : ( <p className="text-red-600 dark:text-red-300"> </p> )}
             </div>
           </div>
@@ -180,23 +180,24 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
             const processedHtml = processMarkedOutput(markedOutput);
 
             return (
-              <div key={index} className={`flex flex-col ${message.sender === 'user' ? 'items-end' : 'items-start'} mb-4`}>
+              <div key={index} className={`flex flex-col ${message.sender === 'user' ? 'items-end' : 'items-start'} mb-6`}>
                 <div className={`flex items-center mb-1 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${message.sender === 'user' ? 'bg-blue-200 dark:bg-blue-500 ml-2' : 'bg-green-500 mr-2'}`}>
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${message.sender === 'user' ? 'bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 ml-3' : 'bg-gradient-to-br from-green-400 to-teal-500 dark:from-green-500 dark:to-teal-600 mr-3'}`}>
                     {message.sender === 'user' ? '👤' : '🤖'}
                   </div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                     {message.sender === 'user' ? 'User' : 'AI'}
                   </span>
                 </div>
                 <div className={`
                   max-w-[95%] sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[65%]
                 `}>
-                  <div className={`px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out
+                  <div className={`px-5 py-4 rounded-2xl shadow-md transition-all duration-300 ease-in-out
                     ${message.sender === 'user'
-                      ? 'bg-gradient-to-r from-blue-200 to-blue-100 text-blue-900 dark:from-blue-600 dark:to-indigo-700 hover:from-blue-300 hover:to-indigo-500 dark:text-white dark:hover:from-blue-700 dark:hover:to-indigo-800'
-                      : 'bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700'
-                    } hover:shadow-lg`}>
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white dark:from-indigo-600 dark:to-purple-700 hover:from-indigo-600 hover:to-purple-700 dark:hover:from-indigo-700 dark:hover:to-purple-800'
+                      : 'bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-700 dark:to-gray-800 dark:text-gray-200 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700'
+                    } hover:shadow-lg transform hover:-translate-y-1`}>
                     {message.image_url && (
                       <div className="mb-4">
                         <div className="relative group">
@@ -218,23 +219,24 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
                       </div>
                     )}
                     <div dangerouslySetInnerHTML={{ __html: processedHtml }} className="prose prose-sm max-w-none dark:prose-invert text-base" />
-                    <div className="flex justify-end mt-2 space-x-2">
+                    
+                  </div>
+                    <div className="flex mt-2 space-x-2">
                       <button 
                         onClick={() => speakText(textSpeak)} 
-                        className="text-xs bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 dark:from-green-600 dark:to-green-800 dark:hover:from-green-500 dark:hover:to-green-700 text-white px-2 py-1 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-md"
+                        className="text-xs bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900 dark:hover:bg-indigo-800 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-md"
                         title='Đọc tin nhắn'
                       >
                         🔊 Nghe
                       </button>
                       <button 
                         onClick={() => copyTextToClipboard(textSpeak)} 
-                        className="text-xs bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 dark:from-purple-600 dark:to-pink-700 dark:hover:from-purple-500 dark:hover:to-pink-600 text-white px-2 py-1 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-md"
+                        className="text-xs bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-md"
                         title='Sao chép tin nhắn'
                       >
                         📋 Sao Chép
                       </button>
                     </div>
-                  </div>
                 </div>
               </div>
             );

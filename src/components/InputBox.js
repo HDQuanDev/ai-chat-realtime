@@ -167,7 +167,7 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
     <div
       id="input-box"
       ref={inputBoxRef}
-      className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3 shadow-lg transition-all duration-300 ${checkTopicAi ? '' : 'pointer-events-none opacity-50'}`}
+      className={`sticky bottom-0 left-0 right-0 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 border-t-2 border-sky-700 border-dashed dark:to-gray-800  px-4 py-3 shadow-lg transition-all duration-300 ${checkTopicAi ? '' : 'pointer-events-none opacity-50'}`}
     >
       <div className="max-w-3xl mx-auto">
         <div className="relative flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg py-2 px-4 focus-within:ring-2 focus-within:ring-blue-400 dark:focus-within:ring-blue-600 transition-all duration-300">
