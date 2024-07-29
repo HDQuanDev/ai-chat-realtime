@@ -341,18 +341,24 @@ const App = () => {
   <CheckData />
   <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
     {/* Header với nút toggle cho mobile */}
-    <div className="bg-blue-600 dark:bg-gray-800 p-3 text-white md:hidden flex items-center justify-between">
-    <button onClick={toggleChatList} className="p-2 focus:outline-none">
-        ☰
-      </button>
-      <h1 className="text-lg font-semibold text-left">{getTitleByCode(getDataFromLocalStorage('active_chat'))}</h1>
-      <SettingsButton className="absolute top-4 right-4 z-10" deleteAllMessage={deleteAllMessage} />
-    </div>
+    <div className="bg-blue-600 dark:bg-gray-800 p-3 text-white md:hidden flex items-center justify-between relative">
+  <button onClick={toggleChatList} className="p-2 focus:outline-none">
+    ☰
+  </button>
+  <h1 className="text-lg font-semibold text-left">
+    {getTitleByCode(getDataFromLocalStorage('active_chat'))}
+  </h1>
+  {!isDesktop && (
+    <SettingsButton className="absolute top-4 right-4 z-10 block md:block" deleteAllMessage={deleteAllMessage} />
+  )}
+</div>
 
-    <SettingsButton 
-  className="absolute top-4 right-4 z-10 hidden md:block" 
-  deleteAllMessage={deleteAllMessage} 
-/>
+
+
+
+{isDesktop && (
+    <SettingsButton className="absolute top-4 right-4 z-10 block md:block" deleteAllMessage={deleteAllMessage} />
+  )}
 
     <div className="flex flex-1 overflow-hidden">
       {/* ChatList */}

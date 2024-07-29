@@ -328,6 +328,8 @@ const SettingsButton = ({deleteAllMessage}) => {
     setDataToLocalStorage('sound-effects', isSoundEffect);
   }, [isSoundEffect]);
 
+  console.log(isSoundEffect);
+
   useEffect(() => {
     setDataToLocalStorage('model', selectedModel);
   }, [selectedModel]);
