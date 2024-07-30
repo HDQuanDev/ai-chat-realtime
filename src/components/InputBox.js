@@ -17,14 +17,16 @@ const ThumbnailPreview = ({ image, onRemove }) => (
   </div>
 );
 
-const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, onHeightChange }) => {
+const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, onHeightChange, inputError, isDragging2 }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef(null);
   const inputBoxRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [isErrorLoad, setIsErrorLoad] = useState(false);
   const [checkTopicAi, setCheckTopicAi] = useState(false);
 
   useEffect(() => {
@@ -107,6 +109,8 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
   const uploadImage = (file) => {
     if (uploadedImage) {
       showToast('Lỗi', 'Bạn chỉ có thể tải lên một ảnh mỗi lần.', 'error');
+      setIsErrorLoad(true);
+      setTimeout(() => setIsErrorLoad(false), 1000);
       return;
     }
 
@@ -122,17 +126,54 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
     };
     reader.onerror = (error) => {
       showToast('Lỗi', 'Đã xảy ra lỗi khi tải ảnh lên: ' + error.message, 'error');
+      setIsErrorLoad(true);
+      setTimeout(() => setIsErrorLoad(false), 1000);
       setIsUploading(false);
     };
 
     // Bắt đầu quá trình đọc file, kết quả trả về là một chuỗi base64
     reader.readAsDataURL(file);
-};
+  };
 
   const removeImage = () => {
     setUploadedImage(null);
   };
-
+  
+  const dragCounter = useRef(0);
+  
+  const handleDragEnter = (event) => {
+    event.preventDefault();
+    dragCounter.current++;
+    if (dragCounter.current === 1) {
+      setIsDragging(true);
+    }
+  };
+  
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+  
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+  
+  const handleDrop = async (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+    dragCounter.current = 0;
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      await uploadImage(file);
+    } else {
+      showToast('Lỗi', 'Vui lòng kéo vào một tệp ảnh.', 'error');
+      setIsErrorLoad(true);
+      setTimeout(() => setIsErrorLoad(false), 1000);
+    }
+  };
   useEffect(() => {
     const checkActiveChat = () => {
       const get_active_chat = localStorage.getItem('active_chat');
@@ -140,38 +181,62 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
         setCheckTopicAi(true);
       }
     };
-  
+
     const handleStorageChange = (event) => {
       if (event.key === 'active_chat') {
         checkActiveChat();
       }
     };
-  
+
     // Kiểm tra giá trị của active_chat khi component được mount
     checkActiveChat();
-  
+
     // Theo dõi sự thay đổi của localStorage từ các tab khác
     window.addEventListener('storage', handleStorageChange);
-  
+
     // Theo dõi sự thay đổi của localStorage trong cùng một tab
     const intervalId = setInterval(checkActiveChat, 100);
-  
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(intervalId);
     };
   }, []);
 
-
   return (
-    <div
-      id="input-box"
-      ref={inputBoxRef}
-      className={`sticky bottom-0 left-0 right-0 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 border-t-2 border-sky-700 border-dashed dark:to-gray-800  px-4 py-3 shadow-lg transition-all duration-300 ${checkTopicAi ? '' : 'pointer-events-none opacity-50'}`}
-    >
+<div
+  id="input-box"
+  ref={inputBoxRef}
+  onDragEnter={handleDragEnter}
+  onDragOver={handleDragOver}
+  onDrop={handleDrop}
+  onDragLeave={handleDragLeave}
+  className={`sticky bottom-0 left-0 right-0 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800 px-4 py-3 shadow-lg transition-all duration-300 ${
+    checkTopicAi ? '' : 'pointer-events-none opacity-50'
+  } ${
+    isDragging
+      ? 'border-4 border-blue-500 bg-blue-100 dark:bg-blue-900'
+      : 'border-t-2 border-sky-700 border-dashed'
+  }`}
+>
+{(isDragging || isDragging2) && (
+  <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 dark:from-blue-600 dark:to-indigo-800 opacity-70 backdrop-blur-sm"></div>
+    <div className="relative text-white text-center p-4 max-w-xs sm:max-w-sm md:max-w-md">
+      <p className="text-lg sm:text-xl font-semibold mb-2">Thả ảnh vào đây</p>
+      <p className="text-sm sm:text-base font-normal opacity-80 mb-4">để tải lên</p>
+      <svg className="mx-auto w-5 h-5 sm:w-7 sm:h-7 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3 3m0 0l-3-3m3 3V8"></path>
+      </svg>
+    </div>
+  </div>
+)}
+
+
+
       <div className="max-w-3xl mx-auto">
-        <div className="relative flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg py-2 px-4 focus-within:ring-2 focus-within:ring-blue-400 dark:focus-within:ring-blue-600 transition-all duration-300">
-        <button
+        <div className={`relative flex items-center bg-gray-50 dark:bg-gray-800 border rounded-lg py-2 px-4 focus-within:ring-2 focus-within:ring-blue-400 dark:focus-within:ring-blue-600 transition-all duration-300 ${(inputError || isErrorLoad) ? 'border-red-500 shake' : 'border-gray-300 dark:border-gray-700'}`}>
+          <button
             id="stop-speaking"
             style={{ display: 'none' }}
             onClick={stopSpeaking}

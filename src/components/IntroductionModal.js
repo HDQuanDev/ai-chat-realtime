@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { showToast } from './Toast';
+import { Click_Sound } from './SoundEffects';
 
 const IntroductionModal = () => {
   const [currentTab, setCurrentTab] = useState(0);
@@ -49,12 +50,14 @@ const IntroductionModal = () => {
   ];
 
   const handleNext = () => {
+    Click_Sound();
     if (currentTab < tabs.length - 1) {
       setCurrentTab(currentTab + 1);
     }
   };
 
   const handlePrevious = () => {
+    Click_Sound();
     if (currentTab > 0) {
       setCurrentTab(currentTab - 1);
     }
@@ -65,6 +68,7 @@ const IntroductionModal = () => {
   };
 
   const handleComplete = async () => {
+    Click_Sound();
     const newUserId = generateUserId();
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/RegisterID`, { chat_id: newUserId });

@@ -21,28 +21,74 @@ const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
     return JSON.parse(localStorage.getItem('messageHistorySave')) || [];
   });
-  const [isChatListOpen, setIsChatListOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
-  const toggleChatList = () => setIsChatListOpen(!isChatListOpen);
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsDesktop(true);
+  const [isChatListOpen, setIsChatListOpen] = useState(window.innerWidth >= 768);
+const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+const [inputError, setInputError] = useState(false);
+
+const toggleChatList = () => {
+  setIsChatListOpen(prev => !prev);
+  Click_Sound();
+};
+useEffect(() => {
+  const handleResize = () => {
+    const newIsDesktop = window.innerWidth >= 768;
+    if (newIsDesktop !== isDesktop) {
+      setIsDesktop(newIsDesktop);
+      if (newIsDesktop) {
         setIsChatListOpen(true);
-      } else {
-        setIsDesktop(false);
       }
-    };
+    }
+  };
 
-    window.addEventListener('resize', handleResize);
+  window.addEventListener('resize', handleResize);
 
-    // Check screen size when component mounts
-    handleResize();
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, [isDesktop]);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+// drag and drop
+
+const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounter.current = 0;
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      // Handle the dropped file here if needed
+      showToast('Thông Báo', 'Vui lòng kéo và thả ảnh vào ô nhập tin nhắn.', 'info');
+      setInputError(true);
+      setTimeout(() => setInputError(false), 1000);
+      // You can also pass this file to InputBox if needed
+    }
+  };
+
   const isDarkMode = useDarkMode();
   const inputBoxRef = useRef(null);
   const scrollButtonRef = useRef(null);
@@ -128,18 +174,35 @@ const App = () => {
   };
 
   const sendMessage = (userInput, uploadedImage = null, autoSpeech = false) => {
-    if (!userInput.trim() && !uploadedImage) {
-      showToast('Thông Báo', 'Vui lòng nhập tin nhắn hoặc đính kèm ảnh.', 'error');
+    if (!userInput.trim()) {
+      showToast('Thông Báo', 'Vui lòng nhập tin nhắn.', 'error');
+      setInputError(true);
+      setTimeout(() => setInputError(false), 1000);
       return;
     }
   
+    // Kiểm tra nếu có ảnh nhưng không có tin nhắn
+    if (uploadedImage && !userInput.trim()) {
+      showToast('Thông Báo', 'Vui lòng nhập tin nhắn và đính kèm ảnh.', 'error');
+      setInputError(true);
+      setTimeout(() => setInputError(false), 1000);
+      return;
+    }
     // Disable input and buttons
     ['send', 'mic', 'user-input'].forEach(disableButton);
-  
-    const newMessage = {
+    var newMessage;
+    if(uploadedImage == null){
+    newMessage = {
       sender: 'user',
       text_display: userInput,
     };
+  }else{
+    newMessage = {
+      sender: 'user',
+      image_url: '/assets/images/wait.png',
+      text_display: userInput,
+    };
+  }
   
     // Add user's message to the chat
     const updatedHistory = [...messageHistory, newMessage];
@@ -158,24 +221,24 @@ const App = () => {
   
   const createAIMessageElement = () => {
     const aiMessage = document.createElement('div');
-    aiMessage.className = 'flex flex-col items-start mb-4';
+    aiMessage.className = 'flex flex-col items-start mb-6';
   
     const aiMessage_2 = document.createElement('div');
     aiMessage_2.className = 'flex items-center mb-1 flex-row';
   
     const aiMessage_3 = document.createElement('div');
-    aiMessage_3.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-green-500 mr-2';
+    aiMessage_3.className = 'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-green-400 to-teal-500 dark:from-green-500 dark:to-teal-600 mr-3';
     aiMessage_3.textContent = '🤖';
   
     const aiMessage_4 = document.createElement('span');
-    aiMessage_4.className = 'text-sm font-medium text-gray-700 dark:text-gray-300';
+    aiMessage_4.className = 'text-sm font-medium text-gray-600 dark:text-gray-400 mb-1';
     aiMessage_4.textContent = 'AI';
   
     const aiMessage_5 = document.createElement('div');
     aiMessage_5.className = 'max-w-[95%] sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[65%]';
   
     const aiMessage_6 = document.createElement('div');
-    aiMessage_6.className = 'px-4 py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700 hover:shadow-lg';
+    aiMessage_6.className = 'px-5 py-4 rounded-2xl shadow-md transition-all duration-300 ease-in-out bg-gradient-to-r from-white to-gray-100 text-gray-800 dark:from-gray-700 dark:to-gray-800 dark:text-gray-200 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-700 hover:shadow-lg transform hover:-translate-y-1';
   
     const aiMessage_7 = document.createElement('div');
     aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-base';
@@ -227,6 +290,7 @@ const App = () => {
               save_text += markdown;
             }
           } catch (error) {
+            showToast('Lỗi', 'Đã xảy ra lỗi khi phân tích cú pháp phản hồi từ máy chủ.', 'error');
             console.error('Error parsing JSON:', error);
           }
         }
@@ -242,21 +306,25 @@ const App = () => {
       Receive_Message();
       document.getElementById('chat-box').removeChild(aiMessage);
   
+      if (!save_text.trim()) {
+        showToast('Lỗi', 'Tin nhắn từ AI bị trống hoặc không hợp lệ. Vui lòng thử lại sau.', 'error');
+        ['send', 'mic', 'user-input'].forEach(enableButton);
+        return;
+      }
+  
       const aiResponse = {
         sender: 'ai',
         text_display: save_text
       };
-      console.log(aiResponse);
+  
       const storedHistory = JSON.parse(localStorage.getItem('messageHistorySave')) || [];
       const updatedHistory = [...storedHistory, aiResponse];
       setMessageHistory(updatedHistory);
       localStorage.setItem('messageHistorySave', JSON.stringify(updatedHistory));
-      console.log(messageHistory);
   
       if (autoSpeech) {
-        speakText(removeMarkdown(aiResponse.text));
+        speakText(removeMarkdown(aiResponse.text_display));
       }
-  
       ['send', 'mic', 'user-input'].forEach(enableButton);
     };
   
@@ -277,6 +345,7 @@ const App = () => {
   
     xhr.send(payload);
   };
+  
   
   let recognition;
 
@@ -311,7 +380,7 @@ const App = () => {
 
         if (finalTranscript) {
           recognition.stop();
-          sendMessage(true);
+          sendMessage(finalTranscript + interimTranscript, null, true);
           document.getElementById('stop-listening').style.display = 'none';
           document.getElementById('mic').style.display = 'inline';
         }
@@ -337,53 +406,57 @@ const App = () => {
   };
 
   return (
-    <MessageProvider>
+<MessageProvider>
   <CheckData />
-  <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
+  <div
+        className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900"
+      >
     {/* Header với nút toggle cho mobile */}
     <div className="bg-blue-600 dark:bg-gray-800 p-3 text-white md:hidden flex items-center justify-between relative">
-  <button onClick={toggleChatList} className="p-2 focus:outline-none">
+  <button onClick={toggleChatList} className="p-2 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
     ☰
   </button>
-  <h1 className="text-lg font-semibold text-left">
+  <h1 className="text-lg font-semibold text-center flex-1 mx-2">
     {getTitleByCode(getDataFromLocalStorage('active_chat'))}
   </h1>
-  {!isDesktop && (
-    <SettingsButton className="absolute top-4 right-4 z-10 block md:block" deleteAllMessage={deleteAllMessage} />
-  )}
+  <div className="p-2"> {/* Placeholder để cân bằng với nút menu */}
+    {!isDesktop && (
+      <SettingsButton className="focus:outline-none transition duration-300 ease-in-out transform hover:scale-110" deleteAllMessage={deleteAllMessage} />
+    )}
+  </div>
 </div>
 
-
-
-
-{isDesktop && (
-    <SettingsButton className="absolute top-4 right-4 z-10 block md:block" deleteAllMessage={deleteAllMessage} />
-  )}
 
     <div className="flex flex-1 overflow-hidden">
       {/* ChatList */}
       <ChatList isOpen={isChatListOpen} toggleChatList={toggleChatList} />
-
       {/* Main content area */}
       <div
-        className={`flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900 transition-transform duration-300 ease-in-out ${
-          isChatListOpen ? 'transform-none' : 'transform md:-translate-x-80'
+        className={`flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900 transition-all duration-300 ease-in-out  ${
+          isChatListOpen ? 'md:ml-0' : 'md:-ml-80'
         }`}
       >
-
         {!isChatListOpen && isDesktop && (
           <button
             onClick={toggleChatList}
-            className="absolute top-4 left-4 p-2 bg-blue-500 dark:bg-gray-700 text-white rounded-md focus:outline-none z-10"
+            className="absolute top-4 left-4 p-2 bg-blue-500 dark:bg-gray-700 text-white rounded-md focus:outline-none z-10 transition duration-300 ease-in-out transform hover:scale-110"
           >
             ☰
           </button>
         )}
-        <div className="flex-1 overflow-y-auto relative">
+        <div
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+         className="flex-1 overflow-y-auto relative">
           <LoadChat setMessageHistory={setMessageHistory} />
           <IntroductionModal />
           <Notifications />
-          
+          {isDesktop && (
+      <SettingsButton className="focus:outline-none transition duration-300 ease-in-out z-[100] transform hover:scale-110" deleteAllMessage={deleteAllMessage} />
+    )}
+
           <PwaPrompt />
           <ChatBox
             messageHistory={messageHistory}
@@ -401,6 +474,8 @@ const App = () => {
           stopDictation={stopDictation}
           stopSpeaking={stopSpeaking}
           inputBoxRef={inputBoxRef}
+          inputError={inputError}
+          isDragging2={isDragging}
         />
       </div>
     </div>

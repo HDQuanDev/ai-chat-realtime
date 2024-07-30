@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
+import { Click_Sound } from './SoundEffects';
 
 const ImagePopup = ({ imageUrl, onClose, altText }) => {
   useEffect(() => {
@@ -52,6 +53,11 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }
+
+  const handlePopupImage = (imageUrl) => {
+    Click_Sound();
+    setPopupImage(imageUrl);
+  };
 
   useEffect(scrollToBottom, [messageHistory]);
 
@@ -209,7 +215,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 rounded-lg flex items-center justify-center">
                             <button
-                              onClick={() => setPopupImage(message.image_url)}
+                              onClick={() => handlePopupImage(message.image_url)}
                               className="hidden group-hover:block bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-md hover:bg-gray-100 transition-all duration-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
                             >
                               Xem full
@@ -262,7 +268,7 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
       {popupImage && (
         <ImagePopup
           imageUrl={popupImage}
-          onClose={() => setPopupImage(null)}
+          onClose={() => handlePopupImage(null)}
           altText="User uploaded content"
         />
       )}

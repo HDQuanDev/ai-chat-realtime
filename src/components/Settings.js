@@ -71,6 +71,7 @@ const SettingsModal = ({
   };
 
   const handleCopyChatId = () => {
+    Click_Sound();
     navigator.clipboard.writeText(chatId);
     Swal.fire({
       title: 'Đã sao chép!',
@@ -82,6 +83,7 @@ const SettingsModal = ({
   };
 
   const handleUpdateChatId = () => {
+    Click_Sound();
     Swal.fire({
       title: 'Cập nhật ID Chat',
       input: 'text',
@@ -96,6 +98,7 @@ const SettingsModal = ({
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        Click_Sound();
         // Gửi request đến API để kiểm tra ID
         fetch(`${process.env.REACT_APP_API_URL}/CheckChatExist`, {
           method: 'POST',
@@ -116,7 +119,7 @@ const SettingsModal = ({
           }
         })
         .catch(error => {
-          console.error('Error:', error);
+          Click_Sound();
           Swal.fire('Lỗi!', 'Đã xảy ra lỗi khi kiểm tra ID.', 'error');
         });
       }
@@ -142,15 +145,19 @@ const SettingsModal = ({
         <SettingsTabs />
   
         <p className="text-center mt-6 text-xs text-gray-500 dark:text-gray-400">
-          Developed by <a href="https://www.facebook.com/quancp72h" target="_blank" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 no-underline" rel="noreferrer">Hứa Đức Quân</a>
-        </p>
+  Developed by <a href="https://www.facebook.com/quancp72h" target="_blank" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 no-underline" rel="noreferrer">Hứa Đức Quân</a>. View the source code on <a href="https://github.com/HDQuanDev/ai-chat-realtime" target="_blank" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 no-underline" rel="noreferrer">GitHub</a>.
+</p>
+
       </div>
     </div>
   );
   
   function SettingsTabs() {
     const [activeTab, setActiveTab] = useState('general');
-  
+    const handleTabChange = (tab) => {
+      setActiveTab(tab);
+      Click_Sound();
+    };
     const tabs = [
       { id: 'general', label: 'Chung', icon: '⚙️' },
       { id: 'model', label: 'Model', icon: '🤖' },
@@ -170,7 +177,7 @@ const SettingsModal = ({
                     ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
                     : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
               >
                 <span className="hidden md:inline mr-2">{tab.icon}</span>
                 <span>{tab.label}</span>
@@ -218,11 +225,12 @@ const SettingsModal = ({
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
         <label htmlFor="model-select" className="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Language Model</label>
         <select 
-          id="model-select" 
-          value={selectedModel} 
-          onChange={handleModelChange}
-          className="w-full p-2 md:p-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-        >
+  id="model-select" 
+  value={selectedModel} 
+  onChange={handleModelChange}
+  onClick={() => Click_Sound()}
+  className="w-full p-2 md:p-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+>
           <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</option>
           <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
           <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
@@ -281,19 +289,20 @@ const SettingsModal = ({
   
   function AboutSettings() {
     return (
-      <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3</h2>
-        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
-          <li>Cập Nhật Lại Toàn Bộ Giao Diện Sử Dụng TailwindCSS</li>
-          <li>Thêm Chức Năng Cài Đặt & Chia Sẻ ID Chat</li>
-          <li>Thêm Chức Năng Đồng Bộ Dữ Liệu Chat Theo ID</li>
-          <li>Thêm Chức Năng Gửi Ảnh & Nhận Diện Văn Bản Trong Ảnh</li>
-          <li>Thêm Danh Sách Trò Chuyện Mới Cho Phép Bạn Tạo Và Chuyển Đổi Giữa Các Trò Chuyện</li>
-          <li>Tối Ưu Hóa Phản Hồi & Câu Trả Lời Của Mô Hình</li>
-          <li>Tối Ưu Hóa Hiệu Suất & Sửa Lỗi</li>
-        </ul>
-        <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3 - © 28/07/2024 By Hứa Đức Quân</span>
-      </div>
+<div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.1</h2>
+  <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
+  <li>Thêm tính năng kéo và thả hình ảnh để có thể gửi ảnh nhanh hơn (drag and drop)</li>
+<li>Cập nhật hiệu ứng âm thanh ở các chức năng mới</li>
+<li>Sửa lỗi không gửi được tin nhắn bằng giọng nói</li>
+<li>Sửa lỗi khiến ô nhập liệu bị ẩn khi có tin nhắn phản hồi trống</li>
+<li>Sửa lỗi không truy cập được mục cài đặt trên giao diện máy tính khi vào trang lần đầu</li>
+<li>Khắc phục các lỗi giao diện hoạt động không nhất quán</li>
+<li>Tối ưu hóa hiệu suất tổng thể của trang web để cải thiện trải nghiệm người dùng</li>
+  </ul>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.1 - © 31/07/2024 By Hứa Đức Quân</span>
+</div>
+
     );
   }
 };
@@ -328,7 +337,6 @@ const SettingsButton = ({deleteAllMessage}) => {
     setDataToLocalStorage('sound-effects', isSoundEffect);
   }, [isSoundEffect]);
 
-  console.log(isSoundEffect);
 
   useEffect(() => {
     setDataToLocalStorage('model', selectedModel);

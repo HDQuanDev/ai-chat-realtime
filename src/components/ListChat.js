@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import UpgradePackage from './UpgradePackage';
 import axios from 'axios';
 import { showToast } from './Toast';
+import { Click_Sound } from './SoundEffects';
 import Swal from 'sweetalert2';
 
 const ListChat = ({ isOpen, toggleChatList }) => {
@@ -132,12 +133,14 @@ const ListChat = ({ isOpen, toggleChatList }) => {
   }, [chats, searchTerm]);
 
   const handleChatSelect = (chatCode) => {
+    Click_Sound();
     setActiveChat(chatCode);
     localStorage.setItem('active_chat', chatCode.toString());
     navigate(`/topic/${chatCode}`);
   };
 
   const createTopic = async () => {
+    Click_Sound();
     const chatId = localStorage.getItem('id_user');
     setIsFirstLoad(true);
     try {
@@ -159,12 +162,12 @@ const ListChat = ({ isOpen, toggleChatList }) => {
   };
 
   return (
-    <div className={`
-      fixed md:static top-0 left-0 h-full w-64 md:w-80 
-      bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-      shadow-lg transition-all duration-300 ease-in-out z-20
-      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-    `}>
+<div className={`
+  fixed md:static top-0 left-0 h-full w-64 md:w-80 
+  bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+  shadow-lg transition-all duration-300 ease-in-out z-20 transform 
+  ${isOpen ? 'translate-x-0' : '-translate-x-full md:-translate-x-full'}
+`}>
       <div className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-gray-700 dark:to-gray-800 text-white">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-xl font-bold">Lịch sử trò chuyện</h2>
@@ -174,11 +177,11 @@ const ListChat = ({ isOpen, toggleChatList }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
               </svg>
             </button>
-            <button onClick={toggleChatList} className="focus:outline-none hover:bg-blue-600 dark:hover:bg-gray-600 p-1 rounded-full transition-colors duration-200 md:hidden">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}></path>
-              </svg>
-            </button>
+            <button onClick={toggleChatList} className="focus:outline-none hover:bg-blue-600 dark:hover:bg-gray-600 p-1 rounded-full transition-colors duration-200">
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}></path>
+        </svg>
+      </button>
           </div>
         </div>
         <div className="relative">
@@ -187,6 +190,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
             placeholder="Tìm kiếm chủ đề..."
             value={searchTerm}
             onChange={handleSearch}
+            onClick={() => Click_Sound()}
             className="w-full px-4 py-2 bg-white dark:bg-gray-700 rounded-full text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500"
           />
           <svg className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -262,19 +266,23 @@ const ListChat = ({ isOpen, toggleChatList }) => {
       </div>
 
       <UpgradePackage 
-        onUpgrade={() => Swal.fire({
-          title: 'Ủng Hộ Tôi Qua QRCode',
-          html: `
-            <img src="https://img.vietqr.io/image/MB-0919982762-compact.png" class="mx-auto" />
-            <p class="mt-2">Số Tài Khoản: 0919982762</p>
-            <p>Chủ tài khoản: Hứa Đức Quân</p>
-            <p>Ngân hàng: MB Bank</p>
-          `,
-          icon: 'info',
-          confirmButtonText: 'Đóng',
-          confirmButtonColor: '#3085d6',
-        })} 
-      />
+  onUpgrade={() => {
+    Swal.fire({
+      title: 'Ủng Hộ Tôi Qua QRCode',
+      html: `
+        <img src="https://img.vietqr.io/image/MB-0919982762-compact.png" class="mx-auto" />
+        <p class="mt-2">Số Tài Khoản: 0919982762</p>
+        <p>Chủ tài khoản: Hứa Đức Quân</p>
+        <p>Ngân hàng: MB Bank</p>
+      `,
+      icon: 'info',
+      confirmButtonText: 'Đóng',
+      confirmButtonColor: '#3085d6',
+    }).then(() => {
+      Click_Sound();
+    });
+  }} 
+/>
     </div>
   );
 };
