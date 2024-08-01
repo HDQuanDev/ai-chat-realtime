@@ -97,10 +97,10 @@ const [isDragging, setIsDragging] = useState(false);
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          console.log('ServiceWorker đã được đăng ký cho: ', registration.scope);
         })
         .catch(err => {
-          console.log('ServiceWorker registration failed: ', err);
+          console.log('ServiceWorker đăng ký thất bại: ', err);
         });
     }
 
@@ -112,7 +112,6 @@ const [isDragging, setIsDragging] = useState(false);
   }, [isDarkMode]);
 
   const handleHeightChange = (height) => {
-    console.log(height);
     if (scrollButtonRef.current && height < '175') {
       var px;
       if(check_is_mobile()){
@@ -120,11 +119,18 @@ const [isDragging, setIsDragging] = useState(false);
       }else{
         px = 65;
       }
-      console.log('scrollButtonRef.current', scrollButtonRef.current);
       scrollButtonRef.current.style.setProperty('bottom', `${height + px}px`, 'important');
     }
   };
+  var background, color;
 
+  if(isDarkMode){
+      background = '#555';
+      color = '#f7f7f7';
+  }else{
+      background = '#ebebeb';
+      color = '#333';
+  }
   const deleteAllMessage = () => {
     const MySwal = withReactContent(Swal);
     if (messageHistory.length === 0) {
@@ -133,44 +139,31 @@ const [isDragging, setIsDragging] = useState(false);
       return;
     }
 
-    var background, color;
 
-    if(isDarkMode){
-        background = '#555';
-        color = '#f7f7f7';
-    }else{
-        background = '#ebebeb';
-        color = '#333';
-    }
     Click_Sound();
     MySwal.fire({
       title: 'Xác nhận',
-      html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không? Hãy nhập "yes" để xác nhận.',
+      html: 'Bạn có chắc muốn xóa toàn bộ tin nhắn không?',
       icon: 'warning',
-      input: 'text',
       background: background,
       color: color,
-      inputPlaceholder: 'Nhập "yes" để xác nhận',
       showCancelButton: true,
       confirmButtonText: 'Xóa',
       cancelButtonText: 'Hủy',
       cancelButtonColor: '#d33',
       confirmButtonColor: '#3085d6',
     }).then((result) => {
-      if (result.isConfirmed && result.value.toLowerCase() === 'yes') {
+      if (result.isConfirmed) {
         Success_Sound();
         setMessageHistory([]);
         localStorage.removeItem('messageHistorySave');
         localStorage.removeItem('id_user');
         showToast('Thông Báo', 'Đã xóa toàn bộ tin nhắn.', 'success');
         window.location.reload(true);
-      } else if (result.isConfirmed) {
-        Click_Sound();
-        MySwal.fire('Cancelled', 'Bạn cần nhập "yes" để xác nhận xóa.', 'error');
       } else {
         Click_Sound();
       }
-    });
+    });    
   };
 
   const sendMessage = (userInput, uploadedImage = null, autoSpeech = false) => {
@@ -261,8 +254,20 @@ const [isDragging, setIsDragging] = useState(false);
     const current_chat_id = getDataFromLocalStorage('active_chat');
   
     if (!current_chat_id) {
-      showToast('Lỗi', 'Không tìm thấy Chat ID. Vui lòng cập nhật ID Chat.', 'error');
+      Swal.fire({
+        title: 'Thông Báo',
+        text: 'Không tìm thấy ID Topic Chat. Vui lòng chọn một chủ đề trước khi gửi tin nhắn.',
+        icon: 'info',
+        color: color,
+      background: background,
+        showCancelButton: false,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6',
+      });
       Typing_Message(true);
+      if (aiMessage && aiMessage.parentNode) {
+        document.getElementById('add-message').removeChild(aiMessage);
+      }
       return;
     }
   
@@ -291,7 +296,6 @@ const [isDragging, setIsDragging] = useState(false);
             }
           } catch (error) {
             showToast('Lỗi', 'Đã xảy ra lỗi khi phân tích cú pháp phản hồi từ máy chủ.', 'error');
-            console.error('Error parsing JSON:', error);
           }
         }
       });

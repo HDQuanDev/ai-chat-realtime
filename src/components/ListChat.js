@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import UpgradePackage from './UpgradePackage';
 import axios from 'axios';
 import { showToast } from './Toast';
-import { Click_Sound } from './SoundEffects';
+import { Click_Sound, Error_Sound } from './SoundEffects';
 import Swal from 'sweetalert2';
+import useDarkMode from './useDarkMode';
 
 const ListChat = ({ isOpen, toggleChatList }) => {
   const [chats, setChats] = useState([]);
@@ -32,7 +33,7 @@ const ListChat = ({ isOpen, toggleChatList }) => {
     if (currentPath === '/' && localStorage.getItem('active_chat')) {
       navigate(`/topic/${localStorage.getItem('active_chat')}`);
     }
-    // console.log('Current Path:', currentPath);
+
 
     const chatId = localStorage.getItem('id_user');
 
@@ -160,6 +161,80 @@ const ListChat = ({ isOpen, toggleChatList }) => {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+  const isDarkMode = useDarkMode();
+
+  var background, color;
+
+  if(isDarkMode){
+      background = '#555';
+      color = '#f7f7f7';
+  }else{
+      background = '#ebebeb';
+      color = '#333';
+  }
+  const handleDeleteChat = (chatCode) => {
+    Click_Sound();
+    // Hiển thị hộp thoại xác nhận
+    Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa chủ đề chat này?',
+      text: "Bạn sẽ không thể hoàn tác hành động này!",
+      icon: 'warning',
+      color: color,
+      background: background,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Có, xóa nó!',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Click_Sound();
+        // Gửi request đến API để kiểm tra ID
+        fetch(`${process.env.REACT_APP_API_URL}/DeleteTopicChat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: chatCode }),
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            // Xóa chủ đề chat khỏi danh sách
+            const updatedChats = chats.filter((chat) => chat.code !== chatCode);
+            setChats(updatedChats);
+            localStorage.setItem('chats', JSON.stringify(updatedChats));
+            localStorage.removeItem('active_chat');
+            // Chọn chủ đề chat hoạt động là chủ đề đầu tiên trong danh sách
+            if (updatedChats.length > 0) {
+              setActiveChat(updatedChats[0].code);
+              localStorage.setItem('active_chat', updatedChats[0].code.toString());
+              navigate(`/topic/${updatedChats[0].code}`);
+            } else {
+              setActiveChat(null);
+              navigate('/');
+            }
+            showToast('Thành công!', 'Chủ đề chat đã được xóa.', 'success');
+          } else {
+            showToast('Lỗi!', 'Đã xảy ra lỗi khi xóa chủ đề chat này: ' + data.message, 'error');
+          }
+        })
+        .catch(error => {
+          Error_Sound();
+          showToast('Lỗi!', 'Đã xảy ra lỗi khi xóa chủ đề chat này: ' + error.message, 'error');
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Click_Sound();
+        showToast('Hủy', 'Chủ đề chat không bị xóa', 'info');
+      }
+    });
+  };
+  
 
   return (
 <div className={`
@@ -240,29 +315,41 @@ const ListChat = ({ isOpen, toggleChatList }) => {
             </button>
           </div>        
         )}
-        {!loading && !error && (
-          <ul className="space-y-2 mt-2">
-            {filteredChats.map((chat) => (
-              <li 
-                key={chat.code} 
-                className={`p-3 rounded-lg flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200
-                  ${activeChat === chat.code ? 'bg-blue-100 dark:bg-blue-900 shadow-md' : ''}
-                `}
-                onClick={() => handleChatSelect(chat.code)}
-              >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center text-white font-bold">
-                  {chat.title.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate">{chat.title}</div>
-                  <div className="text-sm truncate text-gray-500 dark:text-gray-400">
-                    {chat.FirstMessage}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+{!loading && !error && (
+  <ul className="space-y-2 mt-2">
+    {filteredChats.map((chat) => (
+      <li 
+        key={chat.code} 
+        className={`p-3 rounded-lg flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200
+          ${activeChat === chat.code ? 'bg-blue-100 dark:bg-blue-900 shadow-md' : ''}
+        `}
+        onClick={() => handleChatSelect(chat.code)}
+      >
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center text-white font-bold">
+            {chat.title.charAt(0)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold truncate">{chat.title}</div>
+            <div className="text-sm truncate text-gray-500 dark:text-gray-400">
+              {chat.FirstMessage}
+            </div>
+          </div>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteChat(chat.code);
+          }}
+          className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
+          title="Xóa chủ đề chat"
+        >
+          <svg className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+        </button>
+      </li>
+    ))}
+  </ul>
+)}
       </div>
 
       <UpgradePackage 

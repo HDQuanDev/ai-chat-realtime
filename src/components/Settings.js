@@ -3,6 +3,7 @@ import { getDataFromLocalStorage, setDataToLocalStorage } from './Utils';
 import { On_Off_Sound, Click_Sound } from './SoundEffects';
 import 'tailwindcss/tailwind.css';
 import Swal from 'sweetalert2';
+import useDarkMode from './useDarkMode';
 
 const SettingsModal = ({
   isOpen,
@@ -17,6 +18,17 @@ const SettingsModal = ({
 }) => {
   const [displayText, setDisplayText] = useState('');
   const [chatId, setChatId] = useState('');
+  const isDarkMode2 = useDarkMode();
+
+  var background, color;
+
+  if(isDarkMode2){
+      background = '#555';
+      color = '#f7f7f7';
+  }else{
+      background = '#ebebeb';
+      color = '#333';
+  }
 
   useEffect(() => {
     switch (selectedModel) {
@@ -77,6 +89,8 @@ const SettingsModal = ({
       title: 'Đã sao chép!',
       text: 'ID Chat đã được sao chép vào clipboard.',
       icon: 'success',
+      color: color,
+      background: background,
       timer: 1500,
       showConfirmButton: false
     });
@@ -91,6 +105,8 @@ const SettingsModal = ({
       showCancelButton: true,
       confirmButtonText: 'Cập nhật',
       cancelButtonText: 'Hủy',
+      color: color,
+      background: background,
       inputValidator: (value) => {
         if (!value) {
           return 'Vui lòng nhập ID Chat!';
@@ -290,17 +306,19 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
 <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.1</h2>
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.5</h2>
   <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
   <li>Thêm tính năng kéo và thả hình ảnh để có thể gửi ảnh nhanh hơn (drag and drop)</li>
+  <li>Thêm tính năng xóa Topic Chat</li>
 <li>Cập nhật hiệu ứng âm thanh ở các chức năng mới</li>
 <li>Sửa lỗi không gửi được tin nhắn bằng giọng nói</li>
 <li>Sửa lỗi khiến ô nhập liệu bị ẩn khi có tin nhắn phản hồi trống</li>
+<li>Sửa lỗi phản hồi bị thoát ở 1 số trường hợp</li>
 <li>Sửa lỗi không truy cập được mục cài đặt trên giao diện máy tính khi vào trang lần đầu</li>
 <li>Khắc phục các lỗi giao diện hoạt động không nhất quán</li>
 <li>Tối ưu hóa hiệu suất tổng thể của trang web để cải thiện trải nghiệm người dùng</li>
   </ul>
-  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.1 - © 31/07/2024 By Hứa Đức Quân</span>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.5 - © 02/07/2024 By Hứa Đức Quân</span>
 </div>
 
     );
