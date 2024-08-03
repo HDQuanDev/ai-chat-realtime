@@ -32,6 +32,9 @@ const SettingsModal = ({
 
   useEffect(() => {
     switch (selectedModel) {
+      case 'gemini-1.5-pro-exp-0801':
+        setDisplayText('Mô hình đa phương thức cỡ trung mạnh mẽ, hiệu suất vượt trội và mới nhất hỗ trợ lên đến 2 triệu token.');
+        break;
       case 'gemini-1.5-flash-latest':
         setDisplayText('Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng');
         break;
@@ -39,10 +42,10 @@ const SettingsModal = ({
         setDisplayText('Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng');
         break;
       case 'gemini-1.5-pro':
-        setDisplayText('Mô hình đa phương thức cỡ trung hỗ trợ tới 1 triệu token');
+        setDisplayText('Mô hình đa phương thức cỡ trung hỗ trợ tới 2 triệu token');
         break;
       case 'gemini-1.5-pro-latest':
-        setDisplayText('Mô hình đa phương thức cỡ trung hỗ trợ tới 1 triệu token mới nhất');
+        setDisplayText('Mô hình đa phương thức cỡ trung hỗ trợ tới 2 triệu token mới nhất');
         break;
       default:
         setDisplayText('');
@@ -247,6 +250,7 @@ const SettingsModal = ({
   onClick={() => Click_Sound()}
   className="w-full p-2 md:p-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
 >
+          <option value="gemini-1.5-pro-exp-0801">Gemini 1.5 Pro Experimental 0801</option>
           <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</option>
           <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
           <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
@@ -255,6 +259,14 @@ const SettingsModal = ({
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
           <p><span className="font-bold text-blue-500 dark:text-blue-400">Mô Tả:</span> {displayText}</p>
         </div>
+        <div className="mt-2 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
+        <p>
+          <span className="font-bold text-blue-500 dark:text-blue-400">
+            Mô hình đang sử dụng:
+          </span>{" "}
+          {selectedModel}
+        </p>
+      </div>
       </div>
     );
   }
@@ -306,10 +318,11 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
 <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.5</h2>
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.6</h2>
   <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
   <li>Thêm tính năng kéo và thả hình ảnh để có thể gửi ảnh nhanh hơn (drag and drop)</li>
   <li>Thêm tính năng xóa Topic Chat</li>
+  <li>Thêm mô hình ngôn ngữ mới nhất</li>
 <li>Cập nhật hiệu ứng âm thanh ở các chức năng mới</li>
 <li>Sửa lỗi không gửi được tin nhắn bằng giọng nói</li>
 <li>Sửa lỗi khiến ô nhập liệu bị ẩn khi có tin nhắn phản hồi trống</li>
@@ -318,7 +331,7 @@ const SettingsModal = ({
 <li>Khắc phục các lỗi giao diện hoạt động không nhất quán</li>
 <li>Tối ưu hóa hiệu suất tổng thể của trang web để cải thiện trải nghiệm người dùng</li>
   </ul>
-  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.5 - © 02/07/2024 By Hứa Đức Quân</span>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.6 - © 04/07/2024 By Hứa Đức Quân</span>
 </div>
 
     );
