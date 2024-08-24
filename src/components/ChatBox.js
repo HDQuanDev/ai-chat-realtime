@@ -90,12 +90,14 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
     highlight: function (code, lang) {
       const language = hljs.getLanguage(lang) ? lang : 'plaintext';
       return hljs.highlight(code, { language }).value;
-    }
+    },
+    tables: true,
   });
 
   const processMarkedOutput = (html) => {
+    // Xử lý code blocks
     const codeRegex = /<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g;
-    return html.replace(codeRegex, (match, language, code) => {
+    html = html.replace(codeRegex, (match, language, code) => {
       return `
       <div class="code-container my-6 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl bg-gray-900 border border-gray-700">
         <div class="code-header flex justify-between items-center bg-gradient-to-r from-blue-800 to-purple-800 p-3">
@@ -103,10 +105,97 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
           <button class="copy-code-button text-xs bg-gray-700 text-gray-300 hover:bg-gray-600 py-1 px-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="copyCode(this)">
             📋 Sao chép mã
           </button>
-        </div><div class="overflow-x-auto"><pre class="m-0"><code class="language-${language} block p-4 text-sm">${code}</code></pre></div>
+        </div>
+        <div class="overflow-x-auto">
+          <pre class="m-0"><code class="language-${language} block p-4 text-sm">${code}</code></pre>
+        </div>
       </div>
-    `;
+      `;
     });
+  
+    // Xử lý tables
+    const tableRegex = /<table>([\s\S]*?)<\/table>/g;
+    html = html.replace(tableRegex, (match, tableContent) => {
+      const tableRows = tableContent.match(/<tr>([\s\S]*?)<\/tr>/g);
+      let headers = [];
+      let rows = [];
+  
+      if (tableRows) {
+        headers = tableRows[0].match(/<th>([\s\S]*?)<\/th>/g).map(th => th.replace(/<\/?th>/g, ''));
+        rows = tableRows.slice(1).map(row => {
+          return row.match(/<td>([\s\S]*?)<\/td>/g).map(td => td.replace(/<\/?td>/g, ''));
+        });
+      }
+  
+      const responsiveTable = `
+        <div class="block sm:hidden">
+          ${rows.map(row => `
+            <div class="bg-white dark:bg-gray-900 shadow overflow-hidden sm:rounded-lg mb-4">
+              ${row.map((cell, index) => `
+                <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">${headers[index]}</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">${cell}</dd>
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      `;
+  
+      return `
+        <div class="my-6">
+          <div class="hidden sm:block overflow-x-auto rounded-lg shadow-md">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              ${tableContent}
+            </table>
+          </div>
+          ${responsiveTable}
+        </div>
+      `;
+    });
+  
+    // Thêm các lớp Tailwind cho các phần tử của bảng (cho phiên bản desktop)
+    html = html.replace(/<thead>/g, '<thead class="bg-gray-50 dark:bg-gray-800">');
+    html = html.replace(/<th>/g, '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">');
+    html = html.replace(/<tbody>/g, '<tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">');
+    html = html.replace(/<tr>/g, '<tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">');
+    html = html.replace(/<td>/g, '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">');
+    // Links
+    html = html.replace(/<a /g, '<a class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 underline transition duration-300 ease-in-out" ');
+
+    // Blockquotes
+    html = html.replace(/<blockquote>/g, '<blockquote class="border-l-4 border-gray-300 dark:border-gray-700 pl-4 py-2 italic text-gray-600 dark:text-gray-400 my-4">');
+  
+    // Unordered lists
+    html = html.replace(/<ul>/g, '<ul class="list-disc list-inside my-4 space-y-2">');
+  
+    // Ordered lists
+    html = html.replace(/<ol>/g, '<ol class="list-decimal list-inside my-4 space-y-2">');
+  
+    // List items
+    html = html.replace(/<li>/g, '<li class="ml-4">');
+  
+    // Headings
+    html = html.replace(/<h1>/g, '<h1 class="text-4xl font-bold my-6 text-gray-800 dark:text-gray-200">');
+    html = html.replace(/<h2>/g, '<h2 class="text-3xl font-semibold my-5 text-gray-800 dark:text-gray-200">');
+    html = html.replace(/<h3>/g, '<h3 class="text-2xl font-semibold my-4 text-gray-800 dark:text-gray-200">');
+    html = html.replace(/<h4>/g, '<h4 class="text-xl font-semibold my-3 text-gray-800 dark:text-gray-200">');
+    html = html.replace(/<h5>/g, '<h5 class="text-lg font-semibold my-2 text-gray-800 dark:text-gray-200">');
+    html = html.replace(/<h6>/g, '<h6 class="text-base font-semibold my-2 text-gray-800 dark:text-gray-200">');
+
+    // Horizontal rules
+    html = html.replace(/<hr>/g, '<hr class="my-8 border-t border-gray-300 dark:border-gray-700">');
+  
+    // Images
+    html = html.replace(/<img /g, '<img class="max-w-full h-auto rounded-lg shadow-md my-4" ');
+  
+    // Strong/Bold
+    html = html.replace(/<strong>/g, '<strong class="font-bold">');
+  
+    // Emphasis/Italic
+    html = html.replace(/<em>/g, '<em class="italic">');
+  
+    return html;
   };
 
   useEffect(() => {

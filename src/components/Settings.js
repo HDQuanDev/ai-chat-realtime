@@ -318,20 +318,13 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
 <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.3.6</h2>
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.4.0</h2>
   <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
-  <li>Thêm tính năng kéo và thả hình ảnh để có thể gửi ảnh nhanh hơn (drag and drop)</li>
-  <li>Thêm tính năng xóa Topic Chat</li>
-  <li>Thêm mô hình ngôn ngữ mới nhất</li>
-<li>Cập nhật hiệu ứng âm thanh ở các chức năng mới</li>
-<li>Sửa lỗi không gửi được tin nhắn bằng giọng nói</li>
-<li>Sửa lỗi khiến ô nhập liệu bị ẩn khi có tin nhắn phản hồi trống</li>
-<li>Sửa lỗi phản hồi bị thoát ở 1 số trường hợp</li>
-<li>Sửa lỗi không truy cập được mục cài đặt trên giao diện máy tính khi vào trang lần đầu</li>
-<li>Khắc phục các lỗi giao diện hoạt động không nhất quán</li>
-<li>Tối ưu hóa hiệu suất tổng thể của trang web để cải thiện trải nghiệm người dùng</li>
+  <li>🎉 Thêm chức dừng tin nhắn đang phản hồi của máy chủ</li>
+  <li>🎉 Tối ưu hoá giao diện MarkDown khi chuyển đổi qua Tailwind</li>
+  <li>🎉 Cải thiện hiệu suất & Sửa các lỗi vặt đã biết trước đó</li>
   </ul>
-  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.3.6 - © 04/07/2024 By Hứa Đức Quân</span>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.4.0 - © 24/08/2024 By Hứa Đức Quân</span>
 </div>
 
     );

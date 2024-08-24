@@ -24,6 +24,8 @@ const App = () => {
   const [isChatListOpen, setIsChatListOpen] = useState(window.innerWidth >= 768);
 const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 const [inputError, setInputError] = useState(false);
+const xhrRef = useRef(null);
+const [isStreaming, setIsStreaming] = useState(false);
 
 const toggleChatList = () => {
   setIsChatListOpen(prev => !prev);
@@ -215,6 +217,7 @@ const [isDragging, setIsDragging] = useState(false);
   const createAIMessageElement = () => {
     const aiMessage = document.createElement('div');
     aiMessage.className = 'flex flex-col items-start mb-6';
+    aiMessage.id = 'chat-box-ai';
   
     const aiMessage_2 = document.createElement('div');
     aiMessage_2.className = 'flex items-center mb-1 flex-row';
@@ -247,7 +250,18 @@ const [isDragging, setIsDragging] = useState(false);
     return aiMessage;
   };
   
-  const sendToServer = (userInput, aiMessage, uploadedImage = null, autoSpeech) => {
+  const sendToServer = (userInput = null, aiMessage = null, uploadedImage = null, autoSpeech = null, stop = false) => {
+
+    if (stop && xhrRef.current) {
+      xhrRef.current.abort();
+      xhrRef.current = null;
+      setIsStreaming(false);
+      Typing_Message(true);
+      document.getElementById('chat-box-ai').remove();
+      ['send', 'mic', 'user-input'].forEach(enableButton);
+      return;
+    }
+
     Typing_Message();
   
     const modal_select = getDataFromLocalStorage('model');
@@ -270,8 +284,10 @@ const [isDragging, setIsDragging] = useState(false);
       }
       return;
     }
-  
+    setIsStreaming(true);
     const xhr = new XMLHttpRequest();
+    xhrRef.current = xhr;
+
     xhr.open('POST', `${process.env.REACT_APP_API_URL_CHAT}?model=${encodeURIComponent(modal_select)}`, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
   
@@ -311,6 +327,7 @@ const [isDragging, setIsDragging] = useState(false);
       document.getElementById('chat-box').removeChild(aiMessage);
   
       if (!save_text.trim()) {
+        setIsStreaming(false); // Stop streaming
         showToast('Lỗi', 'Tin nhắn từ AI bị trống hoặc không hợp lệ. Vui lòng thử lại sau.', 'error');
         ['send', 'mic', 'user-input'].forEach(enableButton);
         return;
@@ -329,12 +346,14 @@ const [isDragging, setIsDragging] = useState(false);
       if (autoSpeech) {
         speakText(removeMarkdown(aiResponse.text_display));
       }
+      setIsStreaming(false); // Stop streaming
       ['send', 'mic', 'user-input'].forEach(enableButton);
     };
   
     xhr.onerror = () => {
       showToast('Thông Báo', 'Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại sau.', 'error');
       Typing_Message(true);
+      setIsStreaming(false); // Stop streaming
       if (document.getElementById('chat-box').contains(aiMessage)) {
         document.getElementById('chat-box').removeChild(aiMessage);
       }
@@ -349,7 +368,7 @@ const [isDragging, setIsDragging] = useState(false);
   
     xhr.send(payload);
   };
-  
+
   
   let recognition;
 
@@ -471,6 +490,30 @@ const [isDragging, setIsDragging] = useState(false);
             removeMarkdown={removeMarkdown}
           />
         </div>
+        {/* Container cho nút "Dừng nhận tin nhắn" */}
+        {isStreaming && (
+  <button
+    onClick={() => sendToServer(null, null, null, null, true)}
+    className={`
+      px-4 py-2 rounded-full shadow-lg
+      text-sm font-medium
+      transition-all duration-300 ease-in-out
+      transform hover:scale-105 active:scale-95
+      focus:outline-none focus:ring-2 focus:ring-red-500
+      dark:bg-red-600 dark:hover:bg-red-700 dark:text-white
+      bg-red-500 hover:bg-red-600 text-white
+      w-full max-w-xs mx-auto // Thêm các class này
+      mb-2
+    `}
+  >
+    <span className="flex items-center gap-2 justify-center">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      Dừng nhận tin nhắn
+    </span>
+  </button>
+)}
         <InputBox
           onHeightChange={handleHeightChange}
           sendMessage={sendMessage}
