@@ -35,11 +35,20 @@ const SettingsModal = ({
       case 'gemini-1.5-pro-exp-0801':
         setDisplayText('Mô hình đa phương thức cỡ trung mạnh mẽ, hiệu suất vượt trội và mới nhất hỗ trợ lên đến 2 triệu token.');
         break;
+      case 'gemini-1.5-pro-exp-0827':
+        setDisplayText('Mô hình đa phương thức, bản nâng cấp thứ 2 của Gemini 1.5 Pro Experimental 0801, hỗ trợ lên đến 2 triệu token.');
+        break;
       case 'gemini-1.5-flash-latest':
         setDisplayText('Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng');
         break;
       case 'gemini-1.5-flash':
         setDisplayText('Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng');
+        break;
+      case 'gemini-1.5-flash-exp-0827':
+        setDisplayText('Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp thứ 2 của Gemini 1.5 Flash. Hỗ trợ lên đến 1 triệu token.');
+        break;
+      case 'gemini-1.5-flash-8b-exp-0827':
+        setDisplayText('Mô hình đa phương thức nhẹ nhàng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng. Hỗ trợ lên đến 1 triệu token.');
         break;
       case 'gemini-1.5-pro':
         setDisplayText('Mô hình đa phương thức cỡ trung hỗ trợ tới 2 triệu token');
@@ -242,6 +251,9 @@ const SettingsModal = ({
   function ModelSettings() {
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
+                <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
+          <p><span className="font-bold text-blue-500 dark:text-blue-400">Bảng Xếp Hạng:</span> Bạn có thể xem bảng xếp hạng của các mô hình tại <a href="https://lmarena.ai/" target="_blank" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 no-underline" rel="noreferrer">LM Arena</a>.</p>
+        </div>
         <label htmlFor="model-select" className="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Language Model</label>
         <select 
   id="model-select" 
@@ -250,9 +262,12 @@ const SettingsModal = ({
   onClick={() => Click_Sound()}
   className="w-full p-2 md:p-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
 >
+          <option value="gemini-1.5-pro-exp-0827">Gemini 1.5 Pro Experimental 0827</option>
           <option value="gemini-1.5-pro-exp-0801">Gemini 1.5 Pro Experimental 0801</option>
           <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</option>
+          <option value="gemini-1.5-flash-exp-0827">Gemini 1.5 Flash Experimental 0827</option>
           <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-1.5-flash-8b-exp-0827">Gemini 1.5 Flash 8B Experimental 0827</option>
           <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
           <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
         </select>
@@ -318,13 +333,14 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
 <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.4.0</h2>
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.4.1</h2>
   <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
   <li>🎉 Thêm chức dừng tin nhắn đang phản hồi của máy chủ</li>
   <li>🎉 Tối ưu hoá giao diện MarkDown khi chuyển đổi qua Tailwind</li>
   <li>🎉 Cải thiện hiệu suất & Sửa các lỗi vặt đã biết trước đó</li>
+  <li>🎉 Cập nhật mô hình mới nhất cho ứng dụng</li>
   </ul>
-  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.4.0 - © 24/08/2024 By Hứa Đức Quân</span>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.4.1 - © 29/08/2024 By Hứa Đức Quân</span>
 </div>
 
     );
