@@ -15,7 +15,7 @@ import ChatList from './components/ListChat';
 import CheckData from './components/CheckData';
 import LoadChat from './components/LoadChat';
 import { Receive_Message, Typing_Message, Click_Sound, Success_Sound, Error_Sound } from './components/SoundEffects';
-import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, getTitleByCode } from './components/Utils';
+import { stripHTML, escapeHtml, removeMarkdown, disableButton, enableButton, speakText, stopSpeaking, copyTextToClipboard, check_is_mobile, getDataFromLocalStorage, getTitleByCode, showButton, hideButton, saveChatAPI } from './components/Utils';
 
 const App = () => {
   const [messageHistory, setMessageHistory] = useState(() => {
@@ -185,6 +185,8 @@ const [isDragging, setIsDragging] = useState(false);
     }
     // Disable input and buttons
     ['send', 'mic', 'user-input'].forEach(disableButton);
+    ['stop-message'].forEach(showButton);
+    ['send'].forEach(hideButton);
     var newMessage;
     if(uploadedImage == null){
     newMessage = {
@@ -238,6 +240,7 @@ const [isDragging, setIsDragging] = useState(false);
   
     const aiMessage_7 = document.createElement('div');
     aiMessage_7.className = 'prose prose-sm max-w-none dark:prose-invert text-base';
+    aiMessage_7.id = 'ai-message-text';
   
     // Append elements in the correct order
     aiMessage_6.appendChild(aiMessage_7);
@@ -249,16 +252,40 @@ const [isDragging, setIsDragging] = useState(false);
   
     return aiMessage;
   };
-  
-  const sendToServer = (userInput = null, aiMessage = null, uploadedImage = null, autoSpeech = null, stop = false) => {
 
+  const sendToServer = (userInput = null, aiMessage = null, uploadedImage = null, autoSpeech = null, stop = false) => {
+    let message_text = '';
     if (stop && xhrRef.current) {
       xhrRef.current.abort();
       xhrRef.current = null;
+      
+      // Lấy nội dung từ phần tử có id 'ai-message-text'
+      const aiMessageTextElement = document.getElementById('ai-message-text');
+      if (aiMessageTextElement) {
+        message_text = aiMessageTextElement.innerHTML;
+        // Loại bỏ các thẻ HTML và khoảng trắng thừa
+        message_text = message_text.replace(/<[^>]*>/g, '').trim();
+        // Loại bỏ dòng "AI đang trả lời..."
+        message_text = message_text.replace(/AI đang trả lời, vui lòng kiểm tra thông tin trước khi sử dụng\.\.\./, '').trim();
+      }
+
+      
+      // Kiểm tra nếu message_text không rỗng trước khi gửi
+      if (message_text) {
+        saveChatAPI(getDataFromLocalStorage('active_chat'), message_text, 'model');
+      }
+      
       setIsStreaming(false);
       Typing_Message(true);
-      document.getElementById('chat-box-ai').remove();
+      
+      if (document.getElementById('chat-box-ai')) {
+        document.getElementById('chat-box-ai').remove();
+      }
+      
       ['send', 'mic', 'user-input'].forEach(enableButton);
+      ['stop-message'].forEach(hideButton);
+      ['send'].forEach(showButton);
+
       return;
     }
 
@@ -309,6 +336,7 @@ const [isDragging, setIsDragging] = useState(false);
               const markdown = json.text;
               text += markdown;
               save_text += markdown;
+              message_text += markdown;
             }
           } catch (error) {
             showToast('Lỗi', 'Đã xảy ra lỗi khi phân tích cú pháp phản hồi từ máy chủ.', 'error');
@@ -330,6 +358,9 @@ const [isDragging, setIsDragging] = useState(false);
         setIsStreaming(false); // Stop streaming
         showToast('Lỗi', 'Tin nhắn từ AI bị trống hoặc không hợp lệ. Vui lòng thử lại sau.', 'error');
         ['send', 'mic', 'user-input'].forEach(enableButton);
+        ['stop-message'].forEach(hideButton);
+        ['send'].forEach(showButton);
+  
         return;
       }
   
@@ -348,6 +379,9 @@ const [isDragging, setIsDragging] = useState(false);
       }
       setIsStreaming(false); // Stop streaming
       ['send', 'mic', 'user-input'].forEach(enableButton);
+      ['stop-message'].forEach(hideButton);
+      ['send'].forEach(showButton);
+
     };
   
     xhr.onerror = () => {
@@ -358,6 +392,9 @@ const [isDragging, setIsDragging] = useState(false);
         document.getElementById('chat-box').removeChild(aiMessage);
       }
       ['send', 'mic', 'user-input'].forEach(enableButton);
+      ['stop-message'].forEach(hideButton);
+      ['send'].forEach(showButton);
+
     };
   
     const payload = JSON.stringify({
@@ -428,6 +465,12 @@ const [isDragging, setIsDragging] = useState(false);
     }
   };
 
+  const isStream = (stop = true) => {
+    if(isStreaming){
+      sendToServer(null, null, null, null, stop);
+    }
+  }
+
   return (
 <MessageProvider>
   <CheckData />
@@ -490,30 +533,6 @@ const [isDragging, setIsDragging] = useState(false);
             removeMarkdown={removeMarkdown}
           />
         </div>
-        {/* Container cho nút "Dừng nhận tin nhắn" */}
-        {isStreaming && (
-  <button
-    onClick={() => sendToServer(null, null, null, null, true)}
-    className={`
-      px-4 py-2 rounded-full shadow-lg
-      text-sm font-medium
-      transition-all duration-300 ease-in-out
-      transform hover:scale-105 active:scale-95
-      focus:outline-none focus:ring-2 focus:ring-red-500
-      dark:bg-red-600 dark:hover:bg-red-700 dark:text-white
-      bg-red-500 hover:bg-red-600 text-white
-      w-full max-w-xs mx-auto // Thêm các class này
-      mb-2
-    `}
-  >
-    <span className="flex items-center gap-2 justify-center">
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-      </svg>
-      Dừng nhận tin nhắn
-    </span>
-  </button>
-)}
         <InputBox
           onHeightChange={handleHeightChange}
           sendMessage={sendMessage}
@@ -523,6 +542,7 @@ const [isDragging, setIsDragging] = useState(false);
           inputBoxRef={inputBoxRef}
           inputError={inputError}
           isDragging2={isDragging}
+          isStream={isStream}
         />
       </div>
     </div>

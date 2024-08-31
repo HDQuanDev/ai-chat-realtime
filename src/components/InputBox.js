@@ -17,7 +17,7 @@ const ThumbnailPreview = ({ image, onRemove }) => (
   </div>
 );
 
-const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, onHeightChange, inputError, isDragging2 }) => {
+const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, onHeightChange, inputError, isDragging2, isStream }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -312,6 +312,17 @@ const InputBox = ({ sendMessage, startDictation, stopDictation, stopSpeaking, on
               </svg>
             )}
           </button>
+          <button
+            onClick={isStream}
+            id="stop-message"
+            title="Dừng nhận tin nhắn"
+            style={{ display: 'none' }}
+            className="flex-shrink-0 flex items-center justify-center rounded-full h-8 w-8 text-white bg-red-500 hover:bg-red-600 focus:outline-none transition-all duration-200 ease-in-out ml-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        </button>
         </div>
         <div className="flex justify-center mt-2 text-xs text-gray-400 dark:text-gray-500 text-center">
           Câu trả lời chỉ mang tính chất tham khảo, vui lòng kiểm tra trước khi sử dụng

@@ -31,13 +31,16 @@ const LoadChat = ({ setMessageHistory }) => {
 
     const timeoutDuration = 5 * 60 * 1000; // 5 minutes
     let timeoutId;
+    let load_count = 0;
 
     const run = () => {
       const intervalId = setInterval(() => {
         const get_active_chat = localStorage.getItem('active_chat');
-        
         if (get_active_chat !== null && get_active_chat !== '' && get_active_chat !== undefined) {
+          if(load_count === 0){
           setLoading(true);
+          load_count = 1;
+          }
           setError(null);
           connectEventSource();
           clearInterval(intervalId); // Sử dụng intervalId để dừng interval

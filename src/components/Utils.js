@@ -1,5 +1,9 @@
 import toastr from 'toastr';
-import { Click_Sound, Success_Sound, Error_Sound } from './SoundEffects';
+import {
+    Click_Sound,
+    Success_Sound,
+    Error_Sound
+} from './SoundEffects';
 
 export const stripHTML = (html) => {
     const resutl = html.replace(/<[^>]*>/g, '');
@@ -28,6 +32,19 @@ export const disableButton = (id) => {
 export const enableButton = (id) => {
     const element = document.getElementById(id);
     if (element) element.disabled = false;
+};
+
+export const showButton = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+        element.style.removeProperty('display');
+    }
+};
+
+
+export const hideButton = (id) => {
+    const element = document.getElementById(id);
+    if (element) element.style.display = 'none';
 };
 
 export const speakText = (text) => {
@@ -103,7 +120,7 @@ export const check_is_mobile = () => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     if (/android/i.test(userAgent) || (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream)) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -113,7 +130,7 @@ export const getDataFromLocalStorage = (key) => {
     try {
         return JSON.parse(data);
     } catch (e) {
-     return data;
+        return data;
     }
 }
 
@@ -140,21 +157,49 @@ export const randomString = (length) => {
 export const getTitleByCode = (code) => {
     // Lấy dữ liệu từ localStorage
     const chats = localStorage.getItem('chats');
-    
+
     // Kiểm tra nếu dữ liệu không tồn tại hoặc không hợp lệ
     if (!chats) {
         return "QChat AI";
     }
-    
+
     try {
-      // Chuyển đổi dữ liệu JSON thành mảng
-      const chatArray = JSON.parse(chats);
-      
-      // Tìm đối tượng có mã code khớp
-      const chat = chatArray.find(chat => chat.code === code);
-      
-      return chat ? chat.title : null;
+        // Chuyển đổi dữ liệu JSON thành mảng
+        const chatArray = JSON.parse(chats);
+
+        // Tìm đối tượng có mã code khớp
+        const chat = chatArray.find(chat => chat.code === code);
+
+        return chat ? chat.title : null;
     } catch (error) {
         return "QChat AI";
     }
-  };
+};
+
+export const saveChatAPI = (chat_id, message, sender) => {
+    //send to api
+    const data = {
+        chat_id: chat_id,
+        message: message,
+        sender: sender
+    };
+    fetch(`${process.env.REACT_APP_API_URL}/SaveChat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + process.env.REACT_APP_API_KEY
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                return true;
+            } else {
+                return false;
+            }
+        })
+        .catch((error) => {
+            return false;
+        });
+}

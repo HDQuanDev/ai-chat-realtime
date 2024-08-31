@@ -333,14 +333,14 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
 <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
-  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.4.1</h2>
+  <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Nhật Ký Thay Đổi Phiên Bản 1.4.5</h2>
   <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
-  <li>🎉 Thêm chức dừng tin nhắn đang phản hồi của máy chủ</li>
-  <li>🎉 Tối ưu hoá giao diện MarkDown khi chuyển đổi qua Tailwind</li>
-  <li>🎉 Cải thiện hiệu suất & Sửa các lỗi vặt đã biết trước đó</li>
-  <li>🎉 Cập nhật mô hình mới nhất cho ứng dụng</li>
+  <li>🎉 Sửa lỗi: Modal "Đang kết nối đến máy chủ..." luôn hiển thị khi EventSource kết nối lại</li>
+  <li>🎉 Cập nhật: Nút dừng phản hồi được tích hợp trong phần InputBox</li>
+  <li>🎉 Cập nhật: Thêm lưu tin nhắn khi người dùng nhấn Dừng phản hồi</li>
+  <li>🎉 Cải thiện: Hiệu suất và tối ưu hoá giao diện người dùng</li>
   </ul>
-  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.4.1 - © 29/08/2024 By Hứa Đức Quân</span>
+  <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">Phiên bản 1.4.5 - © 01/09/2024 By Hứa Đức Quân</span>
 </div>
 
     );

@@ -80,7 +80,6 @@ const IntroductionModal = () => {
         throw new Error('Failed to register ID');
       }
     } catch (error) {
-      console.error('Error registering ID:', error);
       showToast('Lỗi', 'Có lỗi xảy ra khi đăng ký ID chat. Vui lòng thử lại.', 'error');
     }
   };

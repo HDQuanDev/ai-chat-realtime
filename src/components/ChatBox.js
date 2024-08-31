@@ -211,7 +211,12 @@ const ChatBox = ({ messageHistory, speakText, copyTextToClipboard, stripHTML, es
           button.classList.remove('bg-green-500', 'text-white');
         }, 2000);
       }).catch(err => {
-        console.error('Không thể sao chép mã: ', err);
+        button.textContent = '❌ Lỗi khi sao chép';
+        button.classList.add('bg-red-500', 'text-white');
+        setTimeout(() => {
+          button.textContent = '📋 Sao chép mã';
+          button.classList.remove('bg-red-500', 'text-white');
+        }, 2000);
       });
     };
 

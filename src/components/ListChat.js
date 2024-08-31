@@ -103,7 +103,6 @@ const ListChat = ({ isOpen, toggleChatList }) => {
     };
 
     const handleError = (errorMessage) => {
-      console.error('Error:', errorMessage);
       setError(errorMessage);
       setLoading(false);
       if (eventSourceRef.current) eventSourceRef.current.close();
@@ -153,7 +152,6 @@ const ListChat = ({ isOpen, toggleChatList }) => {
         throw new Error('Failed to register Chat');
       }
     } catch (error) {
-      console.error('Error registering ID:', error);
       showToast('Lỗi', 'Có lỗi xảy ra khi tạo chủ đề chat. Vui lòng thử lại.', 'error');
     }
   };

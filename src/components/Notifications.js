@@ -10,7 +10,7 @@ const Notifications = () => {
         const data = await response.json();
         data.forEach(notification => showToast(notification.title,notification.message, notification.type));
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        showToast('Lỗi', 'Không thể kết nối đến máy chủ để lấy thông báo', 'error');
       }
     };
 
