@@ -37,11 +37,6 @@ const SettingsModal = ({
           "Mô hình đa phương thức cỡ trung mạnh mẽ, là phiên bản nâng cấp thứ 2 của 1.5 Pro, hiệu suất vượt trội và mới nhất hỗ trợ lên đến 2 triệu token."
         );
         break;
-      case "gemini-1.5-pro-exp-0827":
-        setDisplayText(
-          "Mô hình đa phương thức, bản nâng cấp thứ 2 của Gemini 1.5 Pro Experimental 0801, hỗ trợ lên đến 2 triệu token."
-        );
-        break;
       case "gemini-1.5-flash-002":
         setDisplayText(
           "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp thứ 2 của Gemini 1.5 Flash."
@@ -52,14 +47,9 @@ const SettingsModal = ({
           "Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng"
         );
         break;
-      case "gemini-1.5-flash-exp-0827":
+      case "gemini-1.5-flash-8b":
         setDisplayText(
-          "Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp thứ 2 của Gemini 1.5 Flash. Hỗ trợ lên đến 1 triệu token."
-        );
-        break;
-      case "gemini-1.5-flash-8b-exp-0924":
-        setDisplayText(
-          "Mô hình đa phương thức nhẹ nhàng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là phiên bản nâng cấp của 1.5 Flash 8B EXP 0827. Hỗ trợ lên đến 1 triệu token."
+          "Mô hình đa phương thức nhẹ nhàng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là phiên bản nhẹ và nhanh nhất. Hỗ trợ lên đến 1 triệu token."
         );
         break;
       case "gemini-1.5-pro":
@@ -244,11 +234,10 @@ const SettingsModal = ({
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                className={`flex-grow md:flex-grow-0 md:w-full text-center md:text-left py-2 px-3 md:py-3 md:px-4 mb-2 mr-2 md:mr-0 font-medium text-sm focus:outline-none rounded-lg transition-colors duration-200 ${
-                  activeTab === tab.id
+                className={`flex-grow md:flex-grow-0 md:w-full text-center md:text-left py-2 px-3 md:py-3 md:px-4 mb-2 mr-2 md:mr-0 font-medium text-sm focus:outline-none rounded-lg transition-colors duration-200 ${activeTab === tab.id
                     ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
                     : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                }`}
+                  }`}
                 onClick={() => handleTabChange(tab.id)}
               >
                 <span className="hidden md:inline mr-2">{tab.icon}</span>
@@ -345,17 +334,9 @@ const SettingsModal = ({
         >
           <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
           <option value="gemini-1.5-pro-002">Gemini 1.5 Pro 002</option>
-          <option value="gemini-1.5-pro-exp-0827">
-            Gemini 1.5 Pro Experimental 0827
-          </option>
           <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          <option value="gemini-1.5-flash-exp-0827">
-            Gemini 1.5 Flash Experimental 0827
-          </option>
-          <option value="gemini-1.5-flash-8b-exp-0924">
-            Gemini 1.5 Flash 8B Experimental 0924
-          </option>
           <option value="gemini-1.5-flash-002">Gemini 1.5 Flash 002</option>
+          <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
         </select>
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
           <p>
@@ -438,6 +419,13 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Nhật Ký Thay Đổi Phiên Bản 1.4.7
+        </h2>
+        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          <li>🎉 Cập nhật: Các mô hình mới nhất từ Google</li>
+        </ul>
+        <hr className="my-4" />
         <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
           Nhật Ký Thay Đổi Phiên Bản 1.4.6
         </h2>
