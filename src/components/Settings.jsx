@@ -57,6 +57,11 @@ const SettingsModal = ({
           "Mô hình đa phương thức cỡ trung hỗ trợ tới 2 triệu token"
         );
         break;
+      case "gemini-2.0-flash-exp":
+        setDisplayText(
+          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản thử nghiệm của Gemini 2.0 Flash."
+        );
+        break;
       default:
         setDisplayText("");
     }
@@ -235,8 +240,8 @@ const SettingsModal = ({
               <button
                 key={tab.id}
                 className={`flex-grow md:flex-grow-0 md:w-full text-center md:text-left py-2 px-3 md:py-3 md:px-4 mb-2 mr-2 md:mr-0 font-medium text-sm focus:outline-none rounded-lg transition-colors duration-200 ${activeTab === tab.id
-                    ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                    : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                   }`}
                 onClick={() => handleTabChange(tab.id)}
               >
@@ -337,6 +342,7 @@ const SettingsModal = ({
           <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
           <option value="gemini-1.5-flash-002">Gemini 1.5 Flash 002</option>
           <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+          <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
         </select>
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
           <p>
@@ -419,6 +425,13 @@ const SettingsModal = ({
   function AboutSettings() {
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Nhật Ký Thay Đổi Phiên Bản 1.4.8
+        </h2>
+        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          <li>🎉 Cập nhật: Các mô hình mới nhất từ Google</li>
+        </ul>
+        <hr className="my-4" />
         <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
           Nhật Ký Thay Đổi Phiên Bản 1.4.7
         </h2>
