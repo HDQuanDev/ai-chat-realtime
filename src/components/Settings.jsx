@@ -61,10 +61,12 @@ const SettingsModal = ({
         setDisplayText(
           "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản thử nghiệm của Gemini 2.0 Flash."
         );
+        break;
       case "gemini-exp-1206":
         setDisplayText(
           "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp của Gemini 2.0 Flash."
         );
+        break;
       case "gemini-2.0-flash-thinking-exp-1219":
         setDisplayText(
           "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản mới nhất, mạnh nhất hiện tại của Google, hỗ trợ tối đa 32k token."
