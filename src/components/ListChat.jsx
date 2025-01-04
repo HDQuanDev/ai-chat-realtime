@@ -462,10 +462,10 @@ const ListChat = ({ isOpen, toggleChatList }) => {
           Swal.fire({
             title: "Ủng Hộ Tôi Qua QRCode",
             html: `
-        <img src="https://img.vietqr.io/image/MB-0919982762-compact.png" class="mx-auto" />
+        <img src="https://img.vietqr.io/image/VPB-0877872003-compact.png" class="mx-auto" />
         <p class="mt-2">Số Tài Khoản: 0919982762</p>
         <p>Chủ tài khoản: Hứa Đức Quân</p>
-        <p>Ngân hàng: MB Bank</p>
+        <p>Ngân hàng: VP Bank</p>
       `,
             icon: "info",
             confirmButtonText: "Đóng",

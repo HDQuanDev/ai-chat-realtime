@@ -61,6 +61,14 @@ const SettingsModal = ({
         setDisplayText(
           "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản thử nghiệm của Gemini 2.0 Flash."
         );
+      case "gemini-exp-1206":
+        setDisplayText(
+          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp của Gemini 2.0 Flash."
+        );
+      case "gemini-2.0-flash-thinking-exp-1219":
+        setDisplayText(
+          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản mới nhất, mạnh nhất hiện tại của Google, hỗ trợ tối đa 32k token."
+        );
         break;
       default:
         setDisplayText("");
@@ -343,6 +351,8 @@ const SettingsModal = ({
           <option value="gemini-1.5-flash-002">Gemini 1.5 Flash 002</option>
           <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
           <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
+          <option value="gemini-exp-1206">Gemini Experimental 1206</option>
+          <option value="gemini-2.0-flash-thinking-exp-1219">Gemini 2.0 Flash Thinking Experimental 1219</option>
         </select>
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
           <p>
@@ -426,6 +436,14 @@ const SettingsModal = ({
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
         <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Nhật Ký Thay Đổi Phiên Bản 1.4.9
+        </h2>
+        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          <li>🎉 Cập nhật: Các mô hình mới nhất từ Google</li>
+          <li>🎉 Cập nhật: Mô hình mặc định được chuyển từ Gemini 1.5 Flash sang Gemini 2.0 Flash Exp</li>
+        </ul>
+        <hr className="my-4" />
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
           Nhật Ký Thay Đổi Phiên Bản 1.4.8
         </h2>
         <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -495,7 +513,7 @@ const SettingsButton = ({ deleteAllMessage }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSoundEffect, setIsSoundEffect] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash");
+  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash-exp");
 
   useEffect(() => {
     const darkMode = getDataFromLocalStorage("dark-mode");
