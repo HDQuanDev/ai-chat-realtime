@@ -19,6 +19,7 @@ const SettingsModal = ({
   const [displayText, setDisplayText] = useState("");
   const [chatId, setChatId] = useState("");
   const isDarkMode2 = useDarkMode();
+  const [activeTab, setActiveTab] = useState("general");
 
   var background, color;
 
@@ -32,44 +33,14 @@ const SettingsModal = ({
 
   useEffect(() => {
     switch (selectedModel) {
-      case "gemini-1.5-pro-002":
+      case "gemini-2.5-pro-exp-03-25":
         setDisplayText(
-          "Mô hình đa phương thức cỡ trung mạnh mẽ, là phiên bản nâng cấp thứ 2 của 1.5 Pro, hiệu suất vượt trội và mới nhất hỗ trợ lên đến 2 triệu token."
+          "Đây là một mô hình AI với khả năng xử lý mã, suy luận và hiểu đa phương thức. Mô hình đặc biệt mạnh trong việc giải quyết các vấn đề phức tạp, đặc biệt là trong lĩnh vực mã hóa, toán học và STEM, với khả năng phân tích các tập dữ liệu, codebase và tài liệu lớn."
         );
         break;
-      case "gemini-1.5-flash-002":
+      case "gemini-2.0-flash-thinking-exp-01-21":
         setDisplayText(
-          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp thứ 2 của Gemini 1.5 Flash."
-        );
-        break;
-      case "gemini-1.5-flash":
-        setDisplayText(
-          "Mô hình đa phương thức nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng"
-        );
-        break;
-      case "gemini-1.5-flash-8b":
-        setDisplayText(
-          "Mô hình đa phương thức nhẹ nhàng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là phiên bản nhẹ và nhanh nhất. Hỗ trợ lên đến 1 triệu token."
-        );
-        break;
-      case "gemini-1.5-pro":
-        setDisplayText(
-          "Mô hình đa phương thức cỡ trung hỗ trợ tới 2 triệu token"
-        );
-        break;
-      case "gemini-2.0-flash-exp":
-        setDisplayText(
-          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản thử nghiệm của Gemini 2.0 Flash."
-        );
-        break;
-      case "gemini-exp-1206":
-        setDisplayText(
-          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản nâng cấp của Gemini 2.0 Flash."
-        );
-        break;
-      case "gemini-2.0-flash-thinking-exp-1219":
-        setDisplayText(
-          "Mô hình đa phương thức mới nhất nhanh chóng và linh hoạt để mở rộng quy mô cho các nhiệm vụ đa dạng, là bản mới nhất, mạnh nhất hiện tại của Google, hỗ trợ tối đa 32k token."
+          "Mô hình AI đa nhiệm với khả năng hiểu đa phương thức, suy luận logic và giải quyết các vấn đề phức tạp, cập nhật kiến thức đến tháng 8/2024."
         );
         break;
       default:
@@ -84,7 +55,12 @@ const SettingsModal = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+      // Check if the click is outside the modal and not on a SweetAlert element
+      if (
+        modalRef.current && 
+        !modalRef.current.contains(event.target) && 
+        !document.querySelector(".swal2-container")?.contains(event.target)
+      ) {
         onClose();
       }
     };
@@ -230,7 +206,6 @@ const SettingsModal = ({
   );
 
   function SettingsTabs() {
-    const [activeTab, setActiveTab] = useState("general");
     const handleTabChange = (tab) => {
       setActiveTab(tab);
       Click_Sound();
@@ -347,14 +322,8 @@ const SettingsModal = ({
           onClick={() => Click_Sound()}
           className="w-full p-2 md:p-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
         >
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-          <option value="gemini-1.5-pro-002">Gemini 1.5 Pro 002</option>
-          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          <option value="gemini-1.5-flash-002">Gemini 1.5 Flash 002</option>
-          <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
-          <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
-          <option value="gemini-exp-1206">Gemini Experimental 1206</option>
-          <option value="gemini-2.0-flash-thinking-exp-1219">Gemini 2.0 Flash Thinking Experimental 1219</option>
+          <option value="gemini-2.5-pro-exp-03-25">Gemini 2.5 Pro Experimental 03-25</option>
+          <option value="gemini-2.0-flash-thinking-exp-01-21">Gemini 2.0 Flash Thinking Experimental 01-21</option>
         </select>
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-800 dark:text-white transition-colors duration-200">
           <p>
@@ -438,6 +407,16 @@ const SettingsModal = ({
     return (
       <div className="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg">
         <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Nhật Ký Thay Đổi Phiên Bản 1.5.0
+        </h2>
+        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          <li>🎉 Cập nhật: Các mô hình mới nhất từ Google</li>
+          <li>🎉 Cập nhật: Mô hình mặc định được chuyển từ Gemini 2.0 Flash sang Gemini 2.0 Flash Thinking Experimental 01-21</li>
+          <li>🎉 Cải thiện: Hiệu suất và tối ưu hoá giao diện người dùng</li>
+          <li>🎉 Khôi Phục Lại Server API</li>
+        </ul>
+        <hr className="my-4" />
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">
           Nhật Ký Thay Đổi Phiên Bản 1.4.9
         </h2>
         <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -504,7 +483,7 @@ const SettingsModal = ({
           </p>
         </div>
         <span className="block mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-          Phiên bản 1.4.6 - © 29/09/2024 By Hứa Đức Quân
+          Phiên bản 1.5.0 - © 27/03/2025 By Hứa Đức Quân
         </span>
       </div>
     );
@@ -515,7 +494,7 @@ const SettingsButton = ({ deleteAllMessage }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSoundEffect, setIsSoundEffect] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash-exp");
+  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash-thinking-exp-01-21");
 
   useEffect(() => {
     const darkMode = getDataFromLocalStorage("dark-mode");

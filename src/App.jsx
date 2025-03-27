@@ -383,6 +383,21 @@ const App = () => {
     let text = "";
     let save_text = "";
     let lastIndex = 0;
+    
+    // Handle smooth scrolling during streaming
+    let scrollTimeout = null;
+    
+    const scrollToBottom = () => {
+      if (aiMessage) {
+        // Clear any pending scroll timeouts to prevent scroll fighting
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        
+        // Use a small timeout to ensure DOM updates have completed
+        scrollTimeout = setTimeout(() => {
+          aiMessage.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 100);
+      }
+    };
 
     xhr.onprogress = () => {
       const newResponse = xhr.responseText.substring(lastIndex);
@@ -392,6 +407,8 @@ const App = () => {
         .split("\n")
         .filter((line) => line.trim() !== "");
 
+      let contentUpdated = false;
+      
       lines.forEach((line) => {
         if (line.trim().startsWith("data: ")) {
           try {
@@ -401,6 +418,7 @@ const App = () => {
               text += markdown;
               save_text += markdown;
               message_text += markdown;
+              contentUpdated = true;
             }
           } catch (error) {
             showToast(
@@ -412,17 +430,24 @@ const App = () => {
         }
       });
 
-      aiMessage.querySelector(".prose").innerHTML =
-        marked(text) +
-        `<br><hr><span class="code-language font-mono text-xs text-gray-600 dark:text-gray-300">AI đang trả lời, vui lòng kiểm tra thông tin trước khi sử dụng...</span>`;
-      document.getElementById("chat-box").appendChild(aiMessage);
-      aiMessage.scrollIntoView({ behavior: "smooth" });
+      // Only update and scroll if we have new content
+      if (contentUpdated) {
+        aiMessage.querySelector(".prose").innerHTML =
+          marked(text) +
+          `<br><hr><span class="code-language font-mono text-xs text-gray-600 dark:text-gray-300">AI đang trả lời, vui lòng kiểm tra thông tin trước khi sử dụng...</span>`;
+        
+        scrollToBottom();
+      }
     };
 
     xhr.onload = () => {
       Typing_Message(true);
       Receive_Message();
-      document.getElementById("chat-box").removeChild(aiMessage);
+      
+      // Fix: Use the parent node reference instead of assuming "chat-box" is the parent
+      if (aiMessage && aiMessage.parentNode) {
+        aiMessage.parentNode.removeChild(aiMessage);
+      }
 
       if (!save_text.trim()) {
         setIsStreaming(false); // Stop streaming
@@ -459,6 +484,14 @@ const App = () => {
       ["send", "mic", "user-input"].forEach(enableButton);
       ["stop-message"].forEach(hideButton);
       ["send"].forEach(showButton);
+      
+      // Ensure we scroll to the bottom after the complete message is added
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 100);
     };
 
     xhr.onerror = () => {
